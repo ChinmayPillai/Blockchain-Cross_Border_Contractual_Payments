@@ -1,2 +1,2 @@
-# Blockchain and Hyperledged Based Cross-Border-Contractual-Payment System
-Course Project for CS731 - Blockchain Technology and Applications
+# Blockchain and Hyperledger Based Cross-Border-Contractual-Payment System
+Course Project for CS731 - Blockchain Technology and Applications, under Prof. Angshuman Karmakar, IIT Kanpur
