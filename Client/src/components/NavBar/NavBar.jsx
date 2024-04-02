@@ -13,9 +13,31 @@ const Contracts = {
   margin: "me-2",
 };
 
+const ContractRequests = {
+  name: "Contract Requests",
+  link: "/requests",
+  internal: true,
+  margin: "me-2",
+};
+
+const PendingContracts = {
+  name: "Pending Contracts",
+  link: "/pending",
+  internal: true,
+  margin: "me-2",
+};
+
 let Login = {
   name: "Login / SignUp",
   link: "/login",
+  internal: true,
+  margin: "me-2",
+  img: "Login.png",
+};
+
+let Dashboard = {
+  name: "Dashboard",
+  link: "/dashboard",
   internal: true,
   margin: "me-2",
 };
@@ -23,7 +45,9 @@ let Login = {
 function NavBar() {
 
   function Logout() {
-    alert("Logout");
+    localStorage.removeItem("user");
+    alert("User logged out");
+    location.href = "/"
   }
 
   return (
@@ -50,19 +74,28 @@ function NavBar() {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <NavItem item={Home} />
+              <NavItem key={2} item={Contracts} />
             </ul>
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex">
-              <NavItem key={2} item={Contracts} />
-              <NavItem key={3} item={Login} />
-              {/* <li className="nav-item my-2">
-                <img
-                  src="Logout.png"
-                  alt="Logout"
-                  width="30"
-                  height="24"
-                  onClick={Logout}
-                ></img> 
-              </li>*/}
+              <NavItem key={1} item={ContractRequests} />
+              <NavItem key={4} item={PendingContracts} />
+              {
+                localStorage.getItem("user") ? (
+                  <>
+                    <NavItem key={3} item={Dashboard} />
+                    <li className="nav-item my-2">
+                      <img
+                        src="Logout.png"
+                        alt="Logout"
+                        width="30"
+                        height="24"
+                        onClick={Logout}
+                      ></img>
+                    </li>
+                  </>
+                ) :
+                (<NavItem key={3} item={Login} />)
+              }
             </ul>
           </div>
         </div>
