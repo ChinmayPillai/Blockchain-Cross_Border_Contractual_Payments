@@ -17,9 +17,12 @@ import { loginUrl, registerUrl } from "../../Util/apiUrls";
 
 function Login() {
   const [justifyActive, setJustifyActive] = useState("tab1");
+  const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [bankAccount, setBankAccount] = useState("");
+  const [centralBank, setCentralBank] = useState("");
 
   const handleJustifyClick = (value) => {
     if (value === justifyActive) {
@@ -32,17 +35,13 @@ function Login() {
     event.preventDefault();
     console.log("Login\n");
     axios
-      .post(loginUrl, { email: email, password: password })
+      .post(loginUrl, { username: username, password: password })
       .then((response) => {
         console.log(response.data);
-        if (response.data.user) {
-          //cart.setUser(response.data.user);
-          localStorage.setItem("token", response.data.token);
-          if (response.data.user.name)
-            alert(`Logged in as ${response.data.user.name}`);
+        if (response.data.username) {
+          localStorage.setItem("username", response.data.username);
+          alert(`Logged in as ${response.data.username}`);
           location.href = "/";
-          //const navigate = useNavigate();
-          //navigate("/");
         } else {
           alert("Invalid username or password");
         }
@@ -53,7 +52,14 @@ function Login() {
     event.preventDefault();
     console.log("Register\n");
     axios
-      .post(registerUrl, { name: name, email: email, password: password })
+      .post(registerUrl, { 
+        name: name,
+        username: username,
+        email: email,
+        password: password,
+        bankAccount: bankAccount,
+        centralBank: centralBank
+       })
       .then((response) => {
         console.log(response.data);
         if (response.data.name) {
@@ -96,11 +102,11 @@ function Login() {
             <form onSubmit={loginUser}>
               <MDBInput
                 wrapperClass="mb-4"
-                label="Email address"
-                id="loginEmail"
-                type="email"
-                placeholder="abc@gmail.com"
-                value={email}
+                label="Username"
+                id="username"
+                type="text"
+                placeholder="username"
+                value={username}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <MDBInput
@@ -135,6 +141,15 @@ function Login() {
             />
             <MDBInput
               wrapperClass="mb-4"
+              label="Username"
+              id="registerUsername"
+              type="text"
+              placeholder="username"
+              value={username}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <MDBInput
+              wrapperClass="mb-4"
               label="Email"
               id="registerEmail"
               type="email"
@@ -149,6 +164,24 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+            />
+            <MDBInput
+              wrapperClass="mb-4"
+              label="Bank Account"
+              id="bankAccount"
+              type="text"
+              placeholder="BankAccount123"
+              value={bankAccount}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <MDBInput
+              wrapperClass="mb-4"
+              label="Central Bank"
+              id="centralBank"
+              type="text"
+              placeholder="USDCentralBank"
+              value={centralBank}
+              onChange={(e) => setName(e.target.value)}
             />
 
             <MDBBtn className="mb-4 w-100">Sign up</MDBBtn>
