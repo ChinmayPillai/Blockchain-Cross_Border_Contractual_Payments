@@ -1,6 +1,5 @@
 import {Route, Routes, BrowserRouter} from 'react-router-dom'
 import './App.css'
-import Test from './components/Test'
 import Navbar from './components/NavBar/NavBar'
 import Home from './components/Home/Home'
 import MyContracts from './components/MyContracts/MyContracts'
