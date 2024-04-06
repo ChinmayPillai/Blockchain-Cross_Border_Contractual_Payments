@@ -17,7 +17,7 @@ cd fabric-samples/test-network
 
 sudo ./network.sh down
 sudo ./network.sh up createChannel
-sudo ./network.sh deployCC -ccn basic -ccp ../../blockpe/chaincode-go -ccl go
+sudo ./network.sh deployCC -ccn basic -ccp ../../chaincode-go -ccl go
 
 sudo bash
 
