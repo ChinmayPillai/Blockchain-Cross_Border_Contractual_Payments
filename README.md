@@ -35,6 +35,7 @@ export CORE_PEER_ADDRESS=localhost:7051
 ```
 cd server
 npm install
+npm run build
 
 sudo bash
 npm start
