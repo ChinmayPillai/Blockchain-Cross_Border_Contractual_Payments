@@ -16,7 +16,8 @@ const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
 const mspId = envOrDefault('MSP_ID', 'Org1MSP');
 
 // Path to crypto materials.
-const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..', '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com'));
+// const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..', '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com'));
+const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..', '..', '..', 'fabric-samples', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com'));
 
 // Path to user private key directory.
 const keyDirectoryPath = envOrDefault('KEY_DIRECTORY_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'keystore'));
@@ -202,7 +203,7 @@ async function readAssetByID(contract: Contract): Promise<void> {
 /**
  * submitTransaction() will throw an error containing details of any error responses from the smart contract.
  */
-async function updateNonExistentAsset(contract: Contract): Promise<void>{
+async function updateNonExistentAsset(contract: Contract): Promise<void> {
     console.log('\n--> Submit Transaction: UpdateAsset asset70, asset70 does not exist and should return an error');
 
     try {
