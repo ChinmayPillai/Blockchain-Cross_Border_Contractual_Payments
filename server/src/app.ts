@@ -100,11 +100,11 @@ async function main(): Promise<void> {
             }
         });
 
-        app.post('/createUserAsset', async (req:any, res:any) => {
-            const { username, name, bankAccountNo, centralBankID, company } = req.body;
+        app.post('/register', async (req:any, res:any) => {
+            const { username, name, bankAccount, centralBank, company } = req.body;
             try {
                 // Call the CreateUserAsset function on the smart contract.
-                await createUserAsset(contract, username, name, bankAccountNo, centralBankID, company);
+                await createUserAsset(contract, username, name, bankAccount, centralBank, company);
                 res.status(200).json({ message: 'User asset created successfully' });
             } catch (error) {
                 console.error('Error creating user asset:', error);

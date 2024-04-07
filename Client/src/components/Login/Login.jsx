@@ -108,7 +108,7 @@ function Login() {
                 type="text"
                 placeholder="username"
                 value={username}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
               />
               <MDBInput
                 wrapperClass="mb-4"
