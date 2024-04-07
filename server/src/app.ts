@@ -77,12 +77,77 @@ async function main(): Promise<void> {
         // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
         await initLedger(contract);
 
-        await getAllAssets(contract);
+        app.post('/acceptByContractor', async (req:any, res:any) => {
+            const { contractId, contractor, manager, contractorAccount, paymentCurrency } = req.body;
+            try {
+                await acceptByContractor(contract, contractId, contractor, manager, contractorAccount, paymentCurrency);
+                res.status(200).json({ message: 'Contract accepted by contractor' });
+            } catch (error) {
+                console.error('Error accepting contract by contractor:', error);
+                res.status(500).json({ error: 'Failed to accept contract by contractor' });
+            }
+        });
 
-        app.get('/getAssets', async (req:any, res:any) => {
-            const result = await getAllAssets(contract);
-            res.send(result);
-        })
+        app.post('/acceptByManager', async (req:any, res:any) => {
+            const { contractId, manager, contractor } = req.body;
+            try {
+                // Call the AcceptByManager function on the smart contract.
+                await acceptByManager(contract, contractId, manager, contractor);
+                res.status(200).json({ message: 'Contract accepted by manager' });
+            } catch (error) {
+                console.error('Failed to accept contract by manager:', error);
+                res.status(500).json({ error: 'Failed to accept contract by manager' });
+            }
+        });
+
+        app.post('/createUserAsset', async (req:any, res:any) => {
+            const { username, name, bankAccountNo, centralBankID, company } = req.body;
+            try {
+                // Call the CreateUserAsset function on the smart contract.
+                await createUserAsset(contract, username, name, bankAccountNo, centralBankID, company);
+                res.status(200).json({ message: 'User asset created successfully' });
+            } catch (error) {
+                console.error('Error creating user asset:', error);
+                res.status(500).json({ error: 'Failed to create user asset' });
+            }
+        });
+
+        app.get('/getUserAsset/:username', async (req:any, res:any) => {
+            const { username } = req.params;
+            try {
+                // Call the GetUserAsset function on the smart contract.
+                const result = await getUserAsset(contract, username);
+                res.status(200).json(result);
+            } catch (error) {
+                console.error('Error getting user asset:', error);
+                res.status(500).json({ error: 'Failed to get user asset' });
+            }
+        });
+
+        app.get('/getBankAccountAsset/:accountNo', async (req:any, res:any) => {
+            const { accountNo } = req.params;
+            try {
+                // Call the GetBankAccountAsset function on the smart contract.
+                const result = await getBankAccountAsset(contract, accountNo);
+                res.status(200).json(result);
+            } catch (error) {
+                console.error('Error getting bank account asset:', error);
+                res.status(500).json({ error: 'Failed to get bank account asset' });
+            }
+        });
+
+        app.post('/createContractAsset', async (req:any, res:any) => {
+            const { manager, contractor, duration, interval, ratePerInterval, rateCurrency, natureOfWork } = req.body;
+            try {
+                // Call the CreateContractAsset function on the smart contract.
+                await createContractAsset(contract, manager, contractor, duration, interval, ratePerInterval, rateCurrency, natureOfWork);
+                res.status(200).json({ message: 'Contract asset created successfully' });
+            } catch (error) {
+                console.error('Error creating contract asset:', error);
+                res.status(500).json({ error: 'Failed to create contract asset' });
+            }
+        });
+        
 
     }
     finally {
@@ -135,13 +200,23 @@ async function initLedger(contract: Contract): Promise<void> {
     console.log('*** Transaction committed successfully');
 }
 
-/**
- * Evaluate a transaction to query ledger state.
- */
-async function getAllAssets(contract: Contract): Promise<any> {
-    console.log('\n--> Evaluate Transaction: GetAllAssets, function returns all the current assets on the ledger');
+async function createUserAsset(contract: Contract, username: string, name: string, bankAccountNo: string, centralBankID: string, company: string): Promise<void> {
+    console.log('\n--> Submit Transaction: CreateUserAsset, function creates the initial set of assets on the ledger');
 
-    const resultBytes = await contract.evaluateTransaction('GetAllAssets');
+     await contract.submitTransaction(
+        'CreateUserAsset',
+        username,
+        name,
+        bankAccountNo,
+        centralBankID,
+        company
+    );
+}
+
+async function getUserAsset(contract: Contract, username: string): Promise<void> {
+    console.log('\n--> Evaluate Transaction: GetUserAsset, function returns user asset attributes');
+
+    const resultBytes = await contract.evaluateTransaction('GetUserAsset', username);
 
     const resultJson = utf8Decoder.decode(resultBytes);
     const result = JSON.parse(resultJson);
@@ -149,76 +224,53 @@ async function getAllAssets(contract: Contract): Promise<any> {
     return result;
 }
 
-/**
- * Submit a transaction synchronously, blocking until it has been committed to the ledger.
- */
-async function createAsset(contract: Contract): Promise<void> {
-    console.log('\n--> Submit Transaction: CreateAsset, creates new asset with ID, Color, Size, Owner and AppraisedValue arguments');
 
-    await contract.submitTransaction(
-        'CreateAsset',
-        assetId,
-        'yellow',
-        '5',
-        'Tom',
-        '1300',
-    );
 
-    console.log('*** Transaction committed successfully');
-}
-
-/**
- * Submit transaction asynchronously, allowing the application to process the smart contract response (e.g. update a UI)
- * while waiting for the commit notification.
- */
-async function transferAssetAsync(contract: Contract): Promise<void> {
-    console.log('\n--> Async Submit Transaction: TransferAsset, updates existing asset owner');
-
-    const commit = await contract.submitAsync('TransferAsset', {
-        arguments: [assetId, 'Saptha'],
-    });
-    const oldOwner = utf8Decoder.decode(commit.getResult());
-
-    console.log(`*** Successfully submitted transaction to transfer ownership from ${oldOwner} to Saptha`);
-    console.log('*** Waiting for transaction commit');
-
-    const status = await commit.getStatus();
-    if (!status.successful) {
-        throw new Error(`Transaction ${status.transactionId} failed to commit with status code ${status.code}`);
-    }
-
-    console.log('*** Transaction committed successfully');
-}
-
-async function readAssetByID(contract: Contract): Promise<void> {
-    console.log('\n--> Evaluate Transaction: ReadAsset, function returns asset attributes');
-
-    const resultBytes = await contract.evaluateTransaction('ReadAsset', assetId);
-
+async function getBankAccountAsset(contract: Contract, accountNo: string): Promise<any> {
+    console.log('\n--> Evaluate Transaction: GetBankAccountAsset, function returns bank account asset by account number');
+    const resultBytes = await contract.evaluateTransaction('GetBankAccountAsset', accountNo);
     const resultJson = utf8Decoder.decode(resultBytes);
     const result = JSON.parse(resultJson);
     console.log('*** Result:', result);
+    return result;
 }
 
-/**
- * submitTransaction() will throw an error containing details of any error responses from the smart contract.
- */
-async function updateNonExistentAsset(contract: Contract): Promise<void> {
-    console.log('\n--> Submit Transaction: UpdateAsset asset70, asset70 does not exist and should return an error');
+async function createContractAsset(contract: Contract, manager: string, contractor: string, duration: string, interval: string, ratePerInterval: string, rateCurrency: string, natureOfWork: string): Promise<void> {
+    console.log('\n--> Submit Transaction: CreateContractAsset, function creates a new contract asset on the ledger');
+    await contract.submitTransaction(
+        'CreateContractAsset',
+        manager,
+        contractor,
+        duration,
+        interval,
+        ratePerInterval,
+        rateCurrency,
+        natureOfWork
+    );
+}
 
-    try {
-        await contract.submitTransaction(
-            'UpdateAsset',
-            'asset70',
-            'blue',
-            '5',
-            'Tomoko',
-            '300',
-        );
-        console.log('******** FAILED to return an error');
-    } catch (error) {
-        console.log('*** Successfully caught the error: \n', error);
-    }
+async function acceptByContractor(contract: Contract, contractId: number, contractor: string, manager: string, contractorAccount: string, paymentCurrency: string): Promise<void> {
+    console.log('\n--> Submit Transaction: AcceptByContractor, function accepts the contract by the contractor');
+    await contract.submitTransaction(
+        'AcceptByContractor',
+        contractId.toString(),
+        contractor,
+        manager,
+        contractorAccount,
+        paymentCurrency
+    );
+    console.log('*** Transaction committed successfully');
+}
+
+async function acceptByManager(contract: Contract, contractId: number, manager: string, contractor: string): Promise<void> {
+    console.log('\n--> Submit Transaction: AcceptByManager, function accepts the contract by the manager');
+    await contract.submitTransaction(
+        'AcceptByManager',
+        contractId.toString(),
+        manager,
+        contractor
+    );
+    console.log('*** Transaction committed successfully');
 }
 
 /**
