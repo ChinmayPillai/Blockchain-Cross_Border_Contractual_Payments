@@ -3,6 +3,7 @@ package chaincode
 import (
     "encoding/json"
     "fmt"
+    "strconv"
 
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -50,32 +51,44 @@ type ContractAsset struct {
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
     // Initialize any necessary data here
     
-    return ctx.GetStub().PutState("contractNo", 1)
+    return ctx.GetStub().PutState("contractNo", []byte("1"))
 }
 
-func (s * SmartContract) GetContractNo(ctx contractapi.TransactionContextInterface) (int, error) {
-    contractNo, err := ctx.GetStub().GetState("contractNo")
+func (s *SmartContract) GetContractNo(ctx contractapi.TransactionContextInterface) (int, error) {
+    contractNoBytes, err := ctx.GetStub().GetState("contractNo")
     if err != nil {
         return 0, fmt.Errorf("failed to read contractNo from world state: %v", err)
     }
-    if contractNo == nil {
+    if contractNoBytes == nil {
         return 0, fmt.Errorf("contractNo does not exist")
+    }
+
+    contractNo, err := strconv.Atoi(string(contractNoBytes))
+    if err != nil {
+        return 0, fmt.Errorf("failed to convert contractNo to int: %v", err)
     }
 
     return contractNo, nil
 }
 
-func (s * SmartContract) IncrementContractNo(ctx contractapi.TransactionContextInterface) error {
-    contractNo, err := ctx.GetStub().GetState("contractNo")
+func (s *SmartContract) IncrementContractNo(ctx contractapi.TransactionContextInterface) error {
+    contractNoBytes, err := ctx.GetStub().GetState("contractNo")
     if err != nil {
         return fmt.Errorf("failed to read contractNo from world state: %v", err)
     }
-    if contractNo == nil {
+    if contractNoBytes == nil {
         return fmt.Errorf("contractNo does not exist")
     }
 
+    contractNo, err := strconv.Atoi(string(contractNoBytes))
+    if err != nil {
+        return fmt.Errorf("failed to convert contractNo to int: %v", err)
+    }
+
     contractNo++
-    return ctx.GetStub().PutState("contractNo", contractNo)
+    contractNoBytes = []byte(strconv.Itoa(contractNo))
+
+    return ctx.GetStub().PutState("contractNo", contractNoBytes)
 }
 
 // CreateUserAsset creates a new user asset
@@ -88,7 +101,7 @@ func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterf
         return fmt.Errorf("user asset with username %s already exists", username)
     }
 
-    err := s.CreateBankAccountAsset(ctx, bankAccountNo, centralBankID, 0, username)
+    err = s.CreateBankAccountAsset(ctx, bankAccountNo, centralBankID, 0, username)
     if err != nil {
         return err
     }
@@ -183,7 +196,7 @@ func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextIn
     }
 
     
-    contractNo, err := ctx.GetStub().GetState("contractNo")
+    contractNo, err := s.GetContractNo(ctx)
     if err != nil {
         return fmt.Errorf("failed to read contractNo from world state: %v", err)
     }
@@ -217,7 +230,7 @@ func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextIn
     }
 
     // Put the updated user asset back to the world state
-    return ctx.GetStub().PutState(username, userAssetJSON)
+    return ctx.GetStub().PutState(contractor, userAssetJSON)
 }
 
 // AcceptByContractor fills ContractorAccount and PaymentCurrency in the previous contract,
