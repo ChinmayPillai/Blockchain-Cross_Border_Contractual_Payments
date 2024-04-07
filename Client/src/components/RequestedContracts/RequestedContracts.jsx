@@ -16,8 +16,8 @@ const contracts = [
         contractor: "Contractor 2",
         duration: 60,
         natureOfWork: "Web Development",
-        ratePerInterval: 150,
-        rateCurrency: "USD",
+        ratePerInterval: 15000,
+        rateCurrency: "INR",
         interval: 30
     },
     {
@@ -26,7 +26,7 @@ const contracts = [
         duration: 90,
         natureOfWork: "Mobile Development",
         ratePerInterval: 200,
-        rateCurrency: "USD",
+        rateCurrency: "EUR",
         interval: 30
     }
 ]
