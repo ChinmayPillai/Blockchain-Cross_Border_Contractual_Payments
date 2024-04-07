@@ -23,6 +23,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [bankAccount, setBankAccount] = useState("");
   const [centralBank, setCentralBank] = useState("");
+  const [company, setCompany] = useState("");
 
   const handleJustifyClick = (value) => {
     if (value === justifyActive) {
@@ -55,10 +56,10 @@ function Login() {
       .post(registerUrl, { 
         name: name,
         username: username,
-        email: email,
         password: password,
         bankAccount: bankAccount,
-        centralBank: centralBank
+        centralBank: centralBank,
+        company: company
        })
       .then((response) => {
         console.log(response.data);
@@ -146,7 +147,7 @@ function Login() {
               type="text"
               placeholder="username"
               value={username}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <MDBInput
               wrapperClass="mb-4"
@@ -172,7 +173,7 @@ function Login() {
               type="text"
               placeholder="BankAccount123"
               value={bankAccount}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setBankAccount(e.target.value)}
             />
             <MDBInput
               wrapperClass="mb-4"
@@ -181,7 +182,16 @@ function Login() {
               type="text"
               placeholder="USDCentralBank"
               value={centralBank}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setCentralBank(e.target.value)}
+            />
+            <MDBInput
+              wrapperClass="mb-4"
+              label="Company"
+              id="company"
+              type="text"
+              placeholder="Company123"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
             />
 
             <MDBBtn className="mb-4 w-100">Sign up</MDBBtn>
