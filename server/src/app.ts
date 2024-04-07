@@ -79,9 +79,16 @@ async function main(): Promise<void> {
 
         await getAllAssets(contract);
 
-    } finally {
-        gateway.close();
-        client.close();
+        app.get('/getAssets', async (req:any, res:any) => {
+            const result = await getAllAssets(contract);
+            res.send(result);
+        })
+
+    }
+    finally {
+        // gateway.close();
+        // client.close();
+        console.log("Main Executed");
     }
 }
 
@@ -131,7 +138,7 @@ async function initLedger(contract: Contract): Promise<void> {
 /**
  * Evaluate a transaction to query ledger state.
  */
-async function getAllAssets(contract: Contract): Promise<void> {
+async function getAllAssets(contract: Contract): Promise<any> {
     console.log('\n--> Evaluate Transaction: GetAllAssets, function returns all the current assets on the ledger');
 
     const resultBytes = await contract.evaluateTransaction('GetAllAssets');
@@ -139,6 +146,7 @@ async function getAllAssets(contract: Contract): Promise<void> {
     const resultJson = utf8Decoder.decode(resultBytes);
     const result = JSON.parse(resultJson);
     console.log('*** Result:', result);
+    return result;
 }
 
 /**
