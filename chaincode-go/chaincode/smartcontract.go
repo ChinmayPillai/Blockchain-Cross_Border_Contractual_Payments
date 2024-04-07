@@ -37,9 +37,9 @@ type ContractAsset struct {
     ContractId        int    `json:"contractId"`
     Manager           string `json:"manager"`
     Contractor        string `json:"contractor"`
-    Duration          string `json:"duration"`
-    Interval          string `json:"interval"`
-    RatePerInterval   string `json:"ratePerInterval"`
+    Duration          int    `json:"duration"`
+    Interval          int    `json:"interval"`
+    RatePerInterval   int    `json:"ratePerInterval"`
     RateCurrency      string `json:"rateCurrency"`
     NatureOfWork      string `json:"natureOfWork"`
     ContractorAccount string `json:"contractorAccount"`
@@ -86,6 +86,11 @@ func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterf
     }
     if exists {
         return fmt.Errorf("user asset with username %s already exists", username)
+    }
+
+    err := s.CreateBankAccountAsset(ctx, bankAccountNo, centralBankID, 0, username)
+    if err != nil {
+        return err
     }
 
     userAsset := UserAsset{
@@ -171,7 +176,7 @@ func (s *SmartContract) GetBankAccountAsset(ctx contractapi.TransactionContextIn
 }
 
 // CreateContractAsset creates a new contract asset and adds it to the user's asset
-func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, manager string, contractor string, duration string, interval string, ratePerInterval string, rateCurrency string, natureOfWork string) error {
+func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, manager string, contractor string, duration int, interval int, ratePerInterval int, rateCurrency string, natureOfWork string) error {
     userAsset, err := s.GetUserAsset(ctx, contractor)
     if err != nil {
         return err
