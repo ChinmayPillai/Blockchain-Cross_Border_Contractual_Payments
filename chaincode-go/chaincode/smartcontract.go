@@ -18,8 +18,10 @@ type UserAsset struct {
     Requests      []ContractAsset `json:"requests"`
     Pending       []ContractAsset `json:"pending"`
     Username      string          `json:"username"` // Unique primary key
+    Name          string          `json:"name"`
     BankAccountNo string          `json:"bankAccountNo"`
     CentralBankID string          `json:"centralBankID"`
+    Company       string          `json:"company"`
 }
 
 // BankAccountAsset represents a bank account asset
@@ -32,11 +34,13 @@ type BankAccountAsset struct {
 
 // ContractAsset represents a contract asset
 type ContractAsset struct {
+    ContractId        int    `json:"contractId"`
     Manager           string `json:"manager"`
     Contractor        string `json:"contractor"`
     Duration          string `json:"duration"`
     Interval          string `json:"interval"`
     RatePerInterval   string `json:"ratePerInterval"`
+    RateCurrency      string `json:"rateCurrency"`
     NatureOfWork      string `json:"natureOfWork"`
     ContractorAccount string `json:"contractorAccount"`
     PaymentCurrency   string `json:"paymentCurrency"`
@@ -45,11 +49,37 @@ type ContractAsset struct {
 // InitLedger initializes the ledger with sample assets
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
     // Initialize any necessary data here
-    return nil
+    
+    return ctx.GetStub().PutState("contractNo", 1)
+}
+
+func (s * SmartContract) GetContractNo(ctx contractapi.TransactionContextInterface) (int, error) {
+    contractNo, err := ctx.GetStub().GetState("contractNo")
+    if err != nil {
+        return 0, fmt.Errorf("failed to read contractNo from world state: %v", err)
+    }
+    if contractNo == nil {
+        return 0, fmt.Errorf("contractNo does not exist")
+    }
+
+    return contractNo, nil
+}
+
+func (s * SmartContract) IncrementContractNo(ctx contractapi.TransactionContextInterface) error {
+    contractNo, err := ctx.GetStub().GetState("contractNo")
+    if err != nil {
+        return fmt.Errorf("failed to read contractNo from world state: %v", err)
+    }
+    if contractNo == nil {
+        return fmt.Errorf("contractNo does not exist")
+    }
+
+    contractNo++
+    return ctx.GetStub().PutState("contractNo", contractNo)
 }
 
 // CreateUserAsset creates a new user asset
-func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterface, username string, bankAccountNo string, centralBankID string) error {
+func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterface, username string, name string, bankAccountNo string, centralBankID string, company string) error {
     exists, err := s.UserAssetExists(ctx, username)
     if err != nil {
         return err
@@ -63,8 +93,10 @@ func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterf
         Requests:      []ContractAsset{},
         Pending:       []ContractAsset{},
         Username:      username,
+        Name:          name,
         BankAccountNo: bankAccountNo,
         CentralBankID: centralBankID,
+        Company:       company,
     }
 
     userAssetJSON, err := json.Marshal(userAsset)
@@ -139,33 +171,38 @@ func (s *SmartContract) GetBankAccountAsset(ctx contractapi.TransactionContextIn
 }
 
 // CreateContractAsset creates a new contract asset and adds it to the user's asset
-func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, username string, manager string, contractor string, duration string, interval string, ratePerInterval string, natureOfWork string, list string) error {
-    userAsset, err := s.GetUserAsset(ctx, username)
+func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, manager string, contractor string, duration string, interval string, ratePerInterval string, rateCurrency string, natureOfWork string) error {
+    userAsset, err := s.GetUserAsset(ctx, contractor)
     if err != nil {
         return err
     }
 
+    
+    contractNo, err := ctx.GetStub().GetState("contractNo")
+    if err != nil {
+        return fmt.Errorf("failed to read contractNo from world state: %v", err)
+    }
+
     // Create the contract asset
     contract := ContractAsset{
+        ContractId:        contractNo,
         Manager:           manager,
         Contractor:        contractor,
         Duration:          duration,
         Interval:          interval,
         RatePerInterval:   ratePerInterval,
+        RateCurrency:      rateCurrency,
         NatureOfWork:      natureOfWork,
         ContractorAccount: "",
         PaymentCurrency:   "",
     }
 
-    // Add the contract to the appropriate list
-    //switch list {
-    //case "Requests":
-    //    userAsset.Requests = append(userAsset.Requests, contract)
-    //case "Pending":
-    //   userAsset.Pending = append(userAsset.Pending, contract)
-    //default:
-    //    return fmt.Errorf("unsupported list: %s", list)
-    //}
+    // Increment the contract number
+    if err := s.IncrementContractNo(ctx); err != nil {
+        return err
+    }
+
+    // Append the contract to the Requests array of the user
     userAsset.Requests = append(userAsset.Requests, contract)
 
     // Marshal the updated user asset
@@ -181,7 +218,7 @@ func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextIn
 // AcceptByContractor fills ContractorAccount and PaymentCurrency in the previous contract,
 // removes it from the Requests array of contractor,
 // and appends it to the Pending array of manager
-func (s *SmartContract) AcceptByContractor(ctx contractapi.TransactionContextInterface, contractor string, manager string, contractorAccount string, paymentCurrency string) error {
+func (s *SmartContract) AcceptByContractor(ctx contractapi.TransactionContextInterface, contractId int, contractor string, manager string, contractorAccount string, paymentCurrency string) error {
     // Get contractor's user asset
     contractorAsset, err := s.GetUserAsset(ctx, contractor)
     if err != nil {
@@ -192,7 +229,7 @@ func (s *SmartContract) AcceptByContractor(ctx contractapi.TransactionContextInt
     var contractIndex int
     var found bool
     for i, contract := range contractorAsset.Requests {
-        if contract.Contractor == contractor && contract.Manager == manager {
+        if contract.ContractId == contractId{
             contractIndex = i
             found = true
             break
@@ -242,7 +279,7 @@ func (s *SmartContract) AcceptByContractor(ctx contractapi.TransactionContextInt
 
 // AcceptByManager appends the final contract to the Contracts array of both contractor and manager
 // and removes it from the Pending array of manager
-func (s *SmartContract) AcceptByManager(ctx contractapi.TransactionContextInterface, manager string, contractor string) error {
+func (s *SmartContract) AcceptByManager(ctx contractapi.TransactionContextInterface, contractId int, manager string, contractor string) error {
     // Get manager's user asset
     managerAsset, err := s.GetUserAsset(ctx, manager)
     if err != nil {
@@ -253,7 +290,7 @@ func (s *SmartContract) AcceptByManager(ctx contractapi.TransactionContextInterf
     var contractIndex int
     var found bool
     for i, contract := range managerAsset.Pending {
-        if contract.Manager == manager && contract.Contractor == contractor {
+        if contract.ContractId == contractId{
             contractIndex = i
             found = true
             break
