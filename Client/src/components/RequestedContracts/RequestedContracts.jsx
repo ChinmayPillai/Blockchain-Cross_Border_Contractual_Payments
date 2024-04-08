@@ -1,5 +1,7 @@
 import {Typography, Container} from '@mui/material'
 import ContractCard from './ContractCard'
+import axios from 'axios'
+import { RequestedContractsUrlBase } from '../../Util/apiUrls'
 
 const contracts = [
     {
@@ -32,6 +34,18 @@ const contracts = [
 ]
 
 export default function RequestedContracts() {
+
+    if(!localStorage.getItem("username")){
+        location.href = "/login"
+    }
+
+    url = RequestedContractsUrlBase + localStorage.getItem("username")
+
+    axios.get(url, async (response) => {
+        contracts = response.data
+    })
+
+    
     return (
         <Container sx={{ mb: 7, mt: 5, minHeight: "100vh"}}>
             <div className="mb-8" >
