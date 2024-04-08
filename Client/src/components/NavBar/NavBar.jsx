@@ -45,7 +45,7 @@ let Dashboard = {
 function NavBar() {
 
   function Logout() {
-    localStorage.removeItem("user");
+    localStorage.removeItem("username");
     alert("User logged out");
     location.href = "/"
   }
@@ -80,7 +80,7 @@ function NavBar() {
               <NavItem key={1} item={ContractRequests} />
               <NavItem key={4} item={PendingContracts} />
               {
-                localStorage.getItem("user") ? (
+                localStorage.getItem("username") ? (
                   <>
                     <NavItem key={3} item={Dashboard} />
                     <li className="nav-item my-2">
