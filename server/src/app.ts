@@ -135,7 +135,7 @@ async function main(): Promise<void> {
             }
         });
 
-        app.get('/UserAsset/:username', async (req:any, res:any) => {
+        app.get('/userAsset/:username', async (req:any, res:any) => {
             const { username } = req.params;
             try {
                 // Call the GetUserAsset function on the smart contract.
@@ -147,7 +147,7 @@ async function main(): Promise<void> {
             }
         });
 
-        app.get('/BankAccountAsset/:accountNo', async (req:any, res:any) => {
+        app.get('/bankAccountAsset/:accountNo', async (req:any, res:any) => {
             const { accountNo } = req.params;
             try {
                 // Call the GetBankAccountAsset function on the smart contract.
