@@ -9,6 +9,7 @@ import { TextDecoder } from 'util';
 const express = require('express')
 const cors = require('cors');
 const app = express();
+const bcrypt = require('bcrypt');
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -101,14 +102,36 @@ async function main(): Promise<void> {
         });
 
         app.post('/register', async (req:any, res:any) => {
-            const { username, name, bankAccount, centralBank, company } = req.body;
+            const { username, name, password, bankAccount, centralBank, company } = req.body;
             try {
+                // Hash the password
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(password, salt);
+
                 // Call the CreateUserAsset function on the smart contract.
-                await createUserAsset(contract, username, name, bankAccount, centralBank, company);
+                await createUserAsset(contract, username, name, hashedPassword, bankAccount, centralBank, company);
                 res.status(200).json({ message: 'User asset created successfully' });
             } catch (error) {
                 console.error('Error creating user asset:', error);
                 res.status(500).json({ error: 'Failed to create user asset' });
+            }
+        });
+
+        app.post('/login', async (req:any, res:any) => {
+            const { username, password } = req.body;
+            try {
+                // Call the VerifyUserAsset function on the smart contract.
+                const result = await verifyUserAsset(contract, username, password);
+
+                if(result){
+                    res.status(200).json({ message: 'User verified successfully', username: username});
+                }
+                else{
+                    res.status(401).json({ message: 'Invalid Username or Password' });
+                }
+            } catch (error) {
+                console.error('Error verifying user asset:', error);
+                res.status(500).json({ error: 'Failed to verify user asset' });
             }
         });
 
@@ -200,18 +223,28 @@ async function initLedger(contract: Contract): Promise<void> {
     console.log('*** Transaction committed successfully');
 }
 
-async function createUserAsset(contract: Contract, username: string, name: string, bankAccountNo: string, centralBankID: string, company: string): Promise<void> {
+async function createUserAsset(contract: Contract, username: string, name: string, password: string, bankAccountNo: string, centralBankID: string, company: string): Promise<void> {
     console.log('\n--> Submit Transaction: CreateUserAsset, function creates the initial set of assets on the ledger');
 
      await contract.submitTransaction(
         'CreateUserAsset',
         username,
         name,
+        password,
         bankAccountNo,
         centralBankID,
         company
     );
 }
+async function verifyUserAsset(contract: Contract, username: string, password: string): Promise<boolean> {
+    console.log('\n--> Evaluate Transaction: VerifyUserAsset, function verifies user asset with username and password');
+    const resultBytes = await contract.evaluateTransaction('VerifyUserAsset', username, password);
+    const resultJson = utf8Decoder.decode(resultBytes);
+    const result = JSON.parse(resultJson);
+    console.log('*** Result:', result);
+    return result;
+}
+
 
 async function getUserAsset(contract: Contract, username: string): Promise<void> {
     console.log('\n--> Evaluate Transaction: GetUserAsset, function returns user asset attributes');
