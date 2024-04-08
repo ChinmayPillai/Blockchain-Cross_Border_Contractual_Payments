@@ -397,3 +397,31 @@ func (s *SmartContract) BankAccountAssetExists(ctx contractapi.TransactionContex
 
     return bankAccountAssetJSON != nil, nil
 }
+
+// GetRequestsByUser retrieves the Requests array of a user asset by username
+func (s *SmartContract) GetRequestedContracts(ctx contractapi.TransactionContextInterface, username string) ([]ContractAsset, error) {
+    userAsset, err := s.GetUserAsset(ctx, username)
+    if err != nil {
+        return nil, err
+    }
+    return userAsset.Requests, nil
+}
+
+// GetPendingByUser retrieves the Pending array of a user asset by username
+func (s *SmartContract) GetPendingContracts(ctx contractapi.TransactionContextInterface, username string) ([]ContractAsset, error) {
+    userAsset, err := s.GetUserAsset(ctx, username)
+    if err != nil {
+        return nil, err
+    }
+    return userAsset.Pending, nil
+}
+
+// GetContractsByUser retrieves the Contracts array of a user asset by username
+func (s *SmartContract) GetContracts(ctx contractapi.TransactionContextInterface, username string) ([]ContractAsset, error) {
+    userAsset, err := s.GetUserAsset(ctx, username)
+    if err != nil {
+        return nil, err
+    }
+    return userAsset.Contracts, nil
+}
+
