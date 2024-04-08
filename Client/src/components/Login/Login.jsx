@@ -46,6 +46,9 @@ function Login() {
         } else {
           alert("Invalid username or password");
         }
+      })
+      .catch((error) => {
+        alert("Invalid username or password");
       });
   }
 
