@@ -135,7 +135,7 @@ async function main(): Promise<void> {
             }
         });
 
-        app.get('/getUserAsset/:username', async (req:any, res:any) => {
+        app.get('/UserAsset/:username', async (req:any, res:any) => {
             const { username } = req.params;
             try {
                 // Call the GetUserAsset function on the smart contract.
@@ -147,7 +147,7 @@ async function main(): Promise<void> {
             }
         });
 
-        app.get('/getBankAccountAsset/:accountNo', async (req:any, res:any) => {
+        app.get('/BankAccountAsset/:accountNo', async (req:any, res:any) => {
             const { accountNo } = req.params;
             try {
                 // Call the GetBankAccountAsset function on the smart contract.
@@ -159,7 +159,7 @@ async function main(): Promise<void> {
             }
         });
 
-        app.get('/getContracts/:username', async (req:any, res:any) => {
+        app.get('/contracts/:username', async (req:any, res:any) => {
             const { username } = req.params;
             try {
                 // Call the GetContracts function on the smart contract.
@@ -171,7 +171,7 @@ async function main(): Promise<void> {
             }
         });
 
-        app.get('/getRequestedContracts/:username', async (req:any, res:any) => {
+        app.get('/requestedContracts/:username', async (req:any, res:any) => {
             const { username } = req.params;
             try {
                 // Call the GetContracts function on the smart contract.
@@ -183,7 +183,7 @@ async function main(): Promise<void> {
             }
         });
 
-        app.get('/getPendingContracts/:username', async (req:any, res:any) => {
+        app.get('/pendingContracts/:username', async (req:any, res:any) => {
             const { username } = req.params;
             try {
                 // Call the GetContracts function on the smart contract.
