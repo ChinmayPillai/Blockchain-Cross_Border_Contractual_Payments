@@ -304,7 +304,7 @@ async function getBankAccountAsset(contract: Contract, accountNo: string): Promi
     return result;
 }
 
-async function getContracts(contract: Contract, username: string): Promise<ContractAsset[]> {
+async function getContracts(contract: Contract, username: string): Promise<any> {
     console.log('\n--> Evaluate Transaction: GetContracts, function returns contracts for a given username');
     const resultBytes = await contract.evaluateTransaction('GetContracts', username);
     const resultJson = utf8Decoder.decode(resultBytes);
@@ -313,7 +313,7 @@ async function getContracts(contract: Contract, username: string): Promise<Contr
     return result;
 }
 
-async function getRequestedContracts(contract: Contract, username: string): Promise<ContractAsset[]> {
+async function getRequestedContracts(contract: Contract, username: string): Promise<any> {
     console.log('\n--> Evaluate Transaction: GetContracts, function returns contracts for a given username');
     const resultBytes = await contract.evaluateTransaction('GetRequestedContracts', username);
     const resultJson = utf8Decoder.decode(resultBytes);
@@ -323,7 +323,7 @@ async function getRequestedContracts(contract: Contract, username: string): Prom
 }
 
 
-async function getPendingContracts(contract: Contract, username: string): Promise<ContractAsset[]> {
+async function getPendingContracts(contract: Contract, username: string): Promise<any> {
     console.log('\n--> Evaluate Transaction: GetContracts, function returns contracts for a given username');
     const resultBytes = await contract.evaluateTransaction('GetPendingContracts', username);
     const resultJson = utf8Decoder.decode(resultBytes);
