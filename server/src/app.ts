@@ -159,6 +159,42 @@ async function main(): Promise<void> {
             }
         });
 
+        app.get('/getContracts/:username', async (req:any, res:any) => {
+            const { username } = req.params;
+            try {
+                // Call the GetContracts function on the smart contract.
+                const result = await getContracts(contract, username);
+                res.status(200).json(result);
+            } catch (error) {
+                console.error('Error getting contracts:', error);
+                res.status(500).json({ error: 'Failed to get contracts' });
+            }
+        });
+
+        app.get('/getRequestedContracts/:username', async (req:any, res:any) => {
+            const { username } = req.params;
+            try {
+                // Call the GetContracts function on the smart contract.
+                const result = await getRequestedContracts(contract, username);
+                res.status(200).json(result);
+            } catch (error) {
+                console.error('Error getting contracts:', error);
+                res.status(500).json({ error: 'Failed to get contracts' });
+            }
+        });
+
+        app.get('/getPendingContracts/:username', async (req:any, res:any) => {
+            const { username } = req.params;
+            try {
+                // Call the GetContracts function on the smart contract.
+                const result = await getPendingContracts(contract, username);
+                res.status(200).json(result);
+            } catch (error) {
+                console.error('Error getting contracts:', error);
+                res.status(500).json({ error: 'Failed to get contracts' });
+            }
+        });
+
         app.post('/createContractAsset', async (req:any, res:any) => {
             const { manager, contractor, duration, interval, ratePerInterval, rateCurrency, natureOfWork } = req.body;
             try {
@@ -268,6 +304,34 @@ async function getBankAccountAsset(contract: Contract, accountNo: string): Promi
     return result;
 }
 
+async function getContracts(contract: Contract, username: string): Promise<ContractAsset[]> {
+    console.log('\n--> Evaluate Transaction: GetContracts, function returns contracts for a given username');
+    const resultBytes = await contract.evaluateTransaction('GetContracts', username);
+    const resultJson = utf8Decoder.decode(resultBytes);
+    const result = JSON.parse(resultJson);
+    console.log('*** Result:', result);
+    return result;
+}
+
+async function getRequestedContracts(contract: Contract, username: string): Promise<ContractAsset[]> {
+    console.log('\n--> Evaluate Transaction: GetContracts, function returns contracts for a given username');
+    const resultBytes = await contract.evaluateTransaction('GetRequestedContracts', username);
+    const resultJson = utf8Decoder.decode(resultBytes);
+    const result = JSON.parse(resultJson);
+    console.log('*** Result:', result);
+    return result;
+}
+
+
+async function getPendingContracts(contract: Contract, username: string): Promise<ContractAsset[]> {
+    console.log('\n--> Evaluate Transaction: GetContracts, function returns contracts for a given username');
+    const resultBytes = await contract.evaluateTransaction('GetPendingContracts', username);
+    const resultJson = utf8Decoder.decode(resultBytes);
+    const result = JSON.parse(resultJson);
+    console.log('*** Result:', result);
+    return result;
+}
+
 async function createContractAsset(contract: Contract, manager: string, contractor: string, duration: string, interval: string, ratePerInterval: string, rateCurrency: string, natureOfWork: string): Promise<void> {
     console.log('\n--> Submit Transaction: CreateContractAsset, function creates a new contract asset on the ledger');
     await contract.submitTransaction(
@@ -305,6 +369,8 @@ async function acceptByManager(contract: Contract, contractId: number, manager: 
     );
     console.log('*** Transaction committed successfully');
 }
+
+
 
 /**
  * envOrDefault() will return the value of an environment variable, or a default value if the variable is undefined.
