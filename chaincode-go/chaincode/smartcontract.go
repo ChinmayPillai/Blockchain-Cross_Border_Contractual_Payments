@@ -6,6 +6,7 @@ import (
     "strconv"
 
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
+    "golang.org/x/crypto/bcrypt"
 )
 
 // SmartContract provides functions for managing assets
@@ -20,6 +21,7 @@ type UserAsset struct {
     Pending       []ContractAsset `json:"pending"`
     Username      string          `json:"username"` // Unique primary key
     Name          string          `json:"name"`
+    Password      string          `json:"password"`
     BankAccountNo string          `json:"bankAccountNo"`
     CentralBankID string          `json:"centralBankID"`
     Company       string          `json:"company"`
@@ -92,7 +94,7 @@ func (s *SmartContract) IncrementContractNo(ctx contractapi.TransactionContextIn
 }
 
 // CreateUserAsset creates a new user asset
-func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterface, username string, name string, bankAccountNo string, centralBankID string, company string) error {
+func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterface, username string, name string, password string, bankAccountNo string, centralBankID string, company string) error {
     exists, err := s.UserAssetExists(ctx, username)
     if err != nil {
         return err
@@ -112,6 +114,7 @@ func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterf
         Pending:       []ContractAsset{},
         Username:      username,
         Name:          name,
+        Password:      password,
         BankAccountNo: bankAccountNo,
         CentralBankID: centralBankID,
         Company:       company,
@@ -123,6 +126,27 @@ func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterf
     }
 
     return ctx.GetStub().PutState(username, userAssetJSON)
+}
+
+// VerifyUserAsset verifies the password of a user asset
+func (s *SmartContract) VerifyUserAsset(ctx contractapi.TransactionContextInterface, username string, password string) (bool, error) {
+    userAssetJSON, err := ctx.GetStub().GetState(username)
+    if err != nil {
+        return false, fmt.Errorf("failed to read user asset from world state: %v", err)
+    }
+    if userAssetJSON == nil {
+        return false, fmt.Errorf("user asset with username %s does not exist", username)
+    }
+
+    var userAsset UserAsset
+    err = json.Unmarshal(userAssetJSON, &userAsset)
+    if err != nil {
+        return false, err
+    }
+
+    err = bcrypt.CompareHashAndPassword([]byte(userAsset.Password), []byte(password))
+    
+    return err == nil, nil
 }
 
 // GetUserAsset retrieves a user asset by username
