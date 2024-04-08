@@ -7,6 +7,7 @@ import RequestedContracts from './components/RequestedContracts/RequestedContrac
 import PendingContracts from './components/PendingContracts/PendingContracts'
 import Dashboard from './components/Dashboard/Dashboard'
 import Login from './components/Login/Login'
+import NewContract from './components/NewContract/NewContract'
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
           <Route  path="/pending" element={<PendingContracts />} />
           <Route  path="/dashboard" element={<Dashboard />} />
           <Route  path="/login" element={<Login />} />
+          <Route  path="/newcontract" element={<NewContract />} />
         </Route>
       </Routes>
     </BrowserRouter>
