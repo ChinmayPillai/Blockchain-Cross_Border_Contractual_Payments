@@ -1,5 +1,5 @@
 import {Typography, Container} from '@mui/material'
-import ContractCard from '../../Util/ContractCard'
+import ContractCard from './ContractCard'
 
 const contracts = [
     {
