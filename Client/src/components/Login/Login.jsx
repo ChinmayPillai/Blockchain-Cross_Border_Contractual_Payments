@@ -66,10 +66,8 @@ function Login() {
        })
       .then((response) => {
         console.log(response.data);
-        if (response.data.name) {
-          alert(`Registration Successful ${response.data.name}`);
-          location.href = "/login";
-        }
+        alert(`Registration Successful ${response.data.name}`);
+        location.href = "/login";
       });
   }
 
