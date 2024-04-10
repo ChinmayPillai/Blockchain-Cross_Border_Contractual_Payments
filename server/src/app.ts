@@ -17,7 +17,7 @@ app.use(express.json());
 
 
 const channelName = envOrDefault('CHANNEL_NAME', 'mychannel');
-const channelName1 = envOrDefault('CHANNEL_NAME1', 'mychannel1');
+const channelName1 = envOrDefault('CHANNEL_NAME1', 'channel1');
 const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
 const mspId = envOrDefault('MSP_ID', 'Org1MSP');
 
@@ -210,6 +210,19 @@ async function main(): Promise<void> {
                 res.status(500).json({ error: 'Failed to create contract asset' });
             }
         });
+
+
+        app.post('/createBankAccountAsset', async (req:any, res:any) => {
+            const { accountNo, centralBank, funds, owner } = req.body;
+            try {
+                // Call the createBankAccountAsset function on the smart contract.
+                await createBankAccountAsset(contract1, accountNo, centralBank, funds, owner);
+                res.status(200).json({ message: 'Bank account asset created successfully' });
+            } catch (error) {
+                console.error('Error creating bank account asset:', error);
+                res.status(500).json({ error: 'Failed to create bank account asset' });
+            }
+        });
         
 
     }
@@ -374,7 +387,11 @@ async function acceptByManager(contract: Contract, contractId: number, manager: 
     console.log('*** Transaction committed successfully');
 }
 
-
+async function createBankAccountAsset(contract: Contract, accountNo: string, centralBank: string, funds: number, owner: string): Promise<void> {
+    console.log('\n--> Submit Transaction: CreateBankAccountAsset, function creates a new bank account asset on the ledger');
+    await contract.submitTransaction('CreateBankAccountAsset', accountNo, centralBank, funds.toString(), owner);
+    console.log('*** Transaction committed successfully');
+}
 
 /**
  * envOrDefault() will return the value of an environment variable, or a default value if the variable is undefined.
