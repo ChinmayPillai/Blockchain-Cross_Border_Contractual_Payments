@@ -5,12 +5,12 @@ import { acceptByManagerURL } from "../../Util/apiUrls";
 export default function ContractCard({ contract }) {
     function handleAccept() {
         const requestData = {
-            contractId: contract.id,
+            contractId: contract.contractId,
             manager: contract.manager,
             contractor: contract.contractor
         };
 
-        axios.post(acceptByManagerURL   , requestData)
+        axios.post(acceptByManagerURL, requestData)
             .then(response => {
                 console.log(response.data.message);
                 alert('Accepted')
