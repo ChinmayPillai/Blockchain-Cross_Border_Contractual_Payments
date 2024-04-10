@@ -16,7 +16,7 @@ export default function NewContract() {
         e.preventDefault();
 
         try {
-            const response = await axios.post(NewContractUrl, {
+            axios.post(NewContractUrl, {
                 manager,
                 contractor,
                 duration,
@@ -24,9 +24,15 @@ export default function NewContract() {
                 ratePerInterval,
                 rateCurrency,
                 natureOfWork,
+            }).then(response => {
+                console.log(response.data.message);
+                alert('Contract created');
+                location.href = '/';
+            }).catch(error => {
+                console.error('Error creating contract asset:', error);
+                alert('Error');
             });
 
-            console.log(response.data.message);
             // Handle success response
         } catch (error) {
             console.error('Error creating contract asset:', error);
