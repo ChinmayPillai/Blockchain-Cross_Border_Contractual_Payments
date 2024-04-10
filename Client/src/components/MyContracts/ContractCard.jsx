@@ -1,8 +1,8 @@
 import { Typography, Button, Grid } from "@mui/material";
 
 export default function ContractCard({ contract }) {
-    function handleAccept() {
-        console.log("Accepted");
+    function handleRedeem() {
+        console.log("Redeemed");
     }
 
     function handleReject() {
@@ -34,7 +34,7 @@ export default function ContractCard({ contract }) {
                     </Typography>
                 </Grid>
                 <Grid item md={4} lg={4} xl={4} textAlign="end">
-                    <Button variant="contained" color="success" onClick={handleAccept}>
+                    <Button variant="contained" color="success" onClick={handleRedeem}>
                         Redeem Payment
                     </Button>
                     <Button variant="contained" color="error" onClick={handleReject} style={{ marginLeft: '8px' }}>

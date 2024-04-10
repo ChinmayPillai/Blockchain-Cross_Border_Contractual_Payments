@@ -1,8 +1,23 @@
 import { Typography, Button, Grid } from "@mui/material";
+import { acceptByContractorURL } from "../../Util/apiUrls";
+import axios from 'axios'
 
 export default function ContractCard({ contract }) {
     function handleAccept() {
-        console.log("Accepted");
+        axios.post(acceptByContractorURL, {
+            contractId: contract.contractId,
+            contractor: contract.contractor,
+            manager: contract.manager,
+            contractorAccount: contract.contractorAccount,
+            paymentCurrency: contract.paymentCurrency
+        })
+        .then(response => {
+            alert('Accepted')
+            window.location.reload();
+        })
+        .catch(error => {
+            alert('Error')
+        });
     }
 
     function handleReject() {

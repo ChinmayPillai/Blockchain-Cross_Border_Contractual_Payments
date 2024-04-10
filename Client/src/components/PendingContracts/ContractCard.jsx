@@ -1,8 +1,24 @@
 import { Typography, Button, Grid } from "@mui/material";
+import axios from 'axios'
+import { acceptByManagerURL } from "../../Util/apiUrls";
 
 export default function ContractCard({ contract }) {
     function handleAccept() {
-        console.log("Accepted");
+        const requestData = {
+            contractId: contract.id,
+            manager: contract.manager,
+            contractor: contract.contractor
+        };
+
+        axios.post(acceptByManagerURL   , requestData)
+            .then(response => {
+                console.log(response.data.message);
+                alert('Accepted')
+            })
+            .catch(error => {
+                console.error('Failed to accept contract by manager:', error);
+                alert('Error')
+            });
     }
 
     function handleReject() {
