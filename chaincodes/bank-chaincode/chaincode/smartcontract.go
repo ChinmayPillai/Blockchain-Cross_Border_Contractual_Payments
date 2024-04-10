@@ -3,10 +3,8 @@ package chaincode
 import (
     "encoding/json"
     "fmt"
-    "strconv"
 
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
-    "golang.org/x/crypto/bcrypt"
 )
 
 // SmartContract provides functions for managing assets
