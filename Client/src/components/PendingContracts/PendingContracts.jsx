@@ -2,36 +2,9 @@ import {Typography, Container} from '@mui/material'
 import ContractCard from './ContractCard'
 import axios from 'axios'
 import { PendingContractsUrlBase } from '../../Util/apiUrls'
+import { useEffect } from 'react'
 
-const contracts = [
-    {
-        manager: "Manager 1",
-        contractor: "Contractor 1",
-        duration: 30,
-        natureOfWork: "Software Development",
-        ratePerInterval: 100,
-        rateCurrency: "USD",
-        interval: 30
-    },
-    {
-        manager: "Manager 2",
-        contractor: "Contractor 2",
-        duration: 60,
-        natureOfWork: "Web Development",
-        ratePerInterval: 15000,
-        rateCurrency: "INR",
-        interval: 30
-    },
-    {
-        manager: "Manager 3",
-        contractor: "Contractor 3",
-        duration: 90,
-        natureOfWork: "Mobile Development",
-        ratePerInterval: 200,
-        rateCurrency: "EUR",
-        interval: 30
-    }
-]
+let contracts = []
 
 export default function PendingContracts() {
 
@@ -39,11 +12,21 @@ export default function PendingContracts() {
         location.href = "/login"
     }
 
-    url = PendingContractsUrlBase + localStorage.getItem("username")
+    const url = PendingContractsUrlBase + localStorage.getItem("username")
 
-    axios.get(url, async (response) => {
-        contracts = response.data
-    })
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(url);
+                console.log(response.data);
+                contracts = response.data;
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     
     return (
