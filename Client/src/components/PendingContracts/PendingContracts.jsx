@@ -2,11 +2,11 @@ import {Typography, Container} from '@mui/material'
 import ContractCard from './ContractCard'
 import axios from 'axios'
 import { PendingContractsUrlBase } from '../../Util/apiUrls'
-import { useEffect } from 'react'
-
-let contracts = []
+import { useEffect, useState } from 'react'
 
 export default function PendingContracts() {
+
+    const [contracts, setContracts] = useState([])
 
     if(!localStorage.getItem("username")){
         location.href = "/login"
@@ -19,7 +19,7 @@ export default function PendingContracts() {
             try {
                 const response = await axios.get(url);
                 console.log(response.data);
-                contracts = response.data;
+                setContracts(response.data);
             } catch (error) {
                 console.error(error);
             }

@@ -3,11 +3,12 @@ import ContractCard from './ContractCard'
 import axios from 'axios'
 import { ContractsUrlBase } from '../../Util/apiUrls'
 import { Link } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-let contracts = []
 
 export default function MyContracts() {
+
+    const [contracts, setContracts] = useState([])
 
     if(!localStorage.getItem("username")){
         location.href = "/login"
@@ -20,7 +21,7 @@ export default function MyContracts() {
             try {
                 const response = await axios.get(url);
                 console.log(response.data);
-                contracts = response.data;
+                setContracts(response.data);
             } catch (error) {
                 console.error(error);
             }

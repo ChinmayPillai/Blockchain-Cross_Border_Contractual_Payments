@@ -2,11 +2,11 @@ import {Typography, Container} from '@mui/material'
 import ContractCard from './ContractCard'
 import axios from 'axios'
 import { RequestedContractsUrlBase } from '../../Util/apiUrls'
-import { useEffect } from 'react'
-
-let contracts = []
+import { useEffect, useState } from 'react'
 
 export default function RequestedContracts() {
+
+    const [contracts, setContracts] = useState([])
 
     if(!localStorage.getItem("username")){
         location.href = "/login"
@@ -19,7 +19,7 @@ export default function RequestedContracts() {
             try {
                 const response = await axios.get(url);
                 console.log(response.data);
-                contracts = response.data;
+                setContracts(response.data);
             } catch (error) {
                 console.error(error);
             }
