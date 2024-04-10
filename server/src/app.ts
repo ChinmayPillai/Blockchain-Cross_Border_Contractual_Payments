@@ -17,6 +17,7 @@ app.use(express.json());
 
 
 const channelName = envOrDefault('CHANNEL_NAME', 'mychannel');
+const channelName1 = envOrDefault('CHANNEL_NAME1', 'mychannel1');
 const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
 const mspId = envOrDefault('MSP_ID', 'Org1MSP');
 
@@ -71,12 +72,15 @@ async function main(): Promise<void> {
     try {
         // Get a network instance representing the channel where the smart contract is deployed.
         const network = gateway.getNetwork(channelName);
+        const network1 = gateway.getNetwork(channelName1);
 
         // Get the smart contract from the network.
         const contract = network.getContract(chaincodeName);
+        const contract1 = network1.getContract(chaincodeName);
 
         // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
         await initLedger(contract);
+        await initLedger(contract1);
 
         app.post('/acceptByContractor', async (req:any, res:any) => {
             const { contractId, contractor, manager, contractorAccount, paymentCurrency } = req.body;
@@ -151,7 +155,7 @@ async function main(): Promise<void> {
             const { accountNo } = req.params;
             try {
                 // Call the GetBankAccountAsset function on the smart contract.
-                const result = await getBankAccountAsset(contract, accountNo);
+                const result = await getBankAccountAsset(contract1, accountNo);
                 res.status(200).json(result);
             } catch (error) {
                 console.error('Error getting bank account asset:', error);
