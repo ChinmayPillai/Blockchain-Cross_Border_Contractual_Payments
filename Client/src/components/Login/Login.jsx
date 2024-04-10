@@ -66,7 +66,7 @@ function Login() {
        })
       .then((response) => {
         console.log(response.data);
-        alert(`Registration Successful ${response.data.name}`);
+        alert(`Registration Successful`);
         location.href = "/login";
       });
   }
