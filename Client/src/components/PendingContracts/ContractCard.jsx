@@ -12,11 +12,12 @@ export default function ContractCard({ contract }) {
 
         axios.post(acceptByManagerURL, requestData)
             .then(response => {
-                console.log(response.data.message);
+                //console.log(response.data.message);
                 alert('Accepted')
+                window.location.reload();
             })
             .catch(error => {
-                console.error('Failed to accept contract by manager:', error);
+                //console.error('Failed to accept contract by manager:', error);
                 alert('Error')
             });
     }
