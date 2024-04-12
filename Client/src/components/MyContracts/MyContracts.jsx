@@ -37,7 +37,7 @@ export default function MyContracts() {
                 <Typography variant="body1" align="center"> Here you can create and view your active contracts. </Typography>
             </div>
             <Link to="/newcontract" className="mb-4">
-                <Button variant="contained" color="success">Create New Contract</Button>
+                <Button variant="contained" color="success" fullWidth>+ Create New Contract</Button>
             </Link>
             <hr className="mb-4" />
             <div>
