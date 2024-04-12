@@ -1,15 +1,21 @@
 import { Typography, Button, Grid } from "@mui/material";
 import { acceptByContractorURL } from "../../Util/apiUrls";
 import axios from 'axios'
+import { useState } from "react";
 
 export default function ContractCard({ contract }) {
+
+    const [accepted, setAccepted] = useState(false);
+    const [contractorAccount, setContractorAccount] = useState('');
+    const [paymentCurrency, setPaymentCurrency] = useState('');
+
     function handleAccept() {
         axios.post(acceptByContractorURL, {
             contractId: contract.contractId,
             contractor: contract.contractor,
             manager: contract.manager,
-            contractorAccount: contract.contractorAccount,
-            paymentCurrency: contract.paymentCurrency
+            contractorAccount: contractorAccount,
+            paymentCurrency: paymentCurrency
         })
         .then(response => {
             alert('Accepted')
@@ -49,7 +55,7 @@ export default function ContractCard({ contract }) {
                     </Typography>
                 </Grid>
                 <Grid item md={4} lg={4} xl={4} textAlign="end">
-                    <Button variant="contained" color="success" onClick={handleAccept}>
+                    <Button variant="contained" color="success" onClick={() => setAccepted(true)}>
                         Accept
                     </Button>
                     <Button variant="contained" color="error" onClick={handleReject} style={{ marginLeft: '8px' }}>
@@ -57,6 +63,29 @@ export default function ContractCard({ contract }) {
                     </Button>
                 </Grid>
             </Grid>
+
+            {accepted && (
+                <form onSubmit={handleAccept}>
+                    <TextField
+                        label="Contractor Account"
+                        value={contractorAccount}
+                        onChange={(e) => setContractorAccount(e.target.value)}
+                        fullWidth
+                        required
+                    />
+                    <TextField
+                        label="Payment Currency"
+                        value={paymentCurrency}
+                        onChange={(e) => setPaymentCurrency(e.target.value)}
+                        fullWidth
+                        required
+                    />
+                    <Button type="submit" variant="contained" color="success">
+                        Confirm Accept
+                    </Button>
+                </form>
+            )}
+
 
             <hr className="my-4" />
         </>
