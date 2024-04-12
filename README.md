@@ -12,7 +12,7 @@ npm run dev
 
 ### Hyperledger
 ```
-./install-fabric.sh
+sudo ./install-fabric.sh
 cd fabric-samples/test-network
 
 sudo ./network.sh down
