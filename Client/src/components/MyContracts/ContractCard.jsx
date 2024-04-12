@@ -38,7 +38,7 @@ export default function ContractCard({ contract }) {
                         Redeem Payment
                     </Button>
                     <Button variant="contained" color="error" onClick={handleReject} style={{ marginLeft: '8px' }}>
-                        Reject
+                        Rewoke
                     </Button>
                 </Grid>
             </Grid>

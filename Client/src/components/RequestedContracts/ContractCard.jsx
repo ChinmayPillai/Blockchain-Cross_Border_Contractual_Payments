@@ -1,4 +1,4 @@
-import { Typography, Button, Grid } from "@mui/material";
+import { Typography, Button, Grid, TextField } from "@mui/material";
 import { acceptByContractorURL } from "../../Util/apiUrls";
 import axios from 'axios'
 import { useState } from "react";
@@ -65,27 +65,27 @@ export default function ContractCard({ contract }) {
             </Grid>
 
             {accepted && (
-                <form onSubmit={handleAccept}>
+                <form onSubmit={handleAccept} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <TextField
                         label="Contractor Account"
                         value={contractorAccount}
                         onChange={(e) => setContractorAccount(e.target.value)}
-                        fullWidth
                         required
+                        style={{ marginTop: '30px' }}
                     />
+                    <br />
                     <TextField
                         label="Payment Currency"
                         value={paymentCurrency}
                         onChange={(e) => setPaymentCurrency(e.target.value)}
-                        fullWidth
                         required
                     />
+                    <br />
                     <Button type="submit" variant="contained" color="success">
                         Confirm Accept
                     </Button>
                 </form>
             )}
-
 
             <hr className="my-4" />
         </>
