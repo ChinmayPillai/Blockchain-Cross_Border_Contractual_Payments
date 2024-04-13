@@ -22,6 +22,7 @@ type UserAsset struct {
     Username      string          `json:"username"` // Unique primary key
     Name          string          `json:"name"`
     Password      string          `json:"password"`
+    Bank          string          `json:"bank"`
     BankAccountNo string          `json:"bankAccountNo"`
     CentralBankID string          `json:"centralBankID"`
     Company       string          `json:"company"`
@@ -94,7 +95,7 @@ func (s *SmartContract) IncrementContractNo(ctx contractapi.TransactionContextIn
 }
 
 // CreateUserAsset creates a new user asset
-func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterface, username string, name string, password string, bankAccountNo string, centralBankID string, company string) error {
+func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterface, username string, name string, password string, bank string, bankAccountNo string, centralBankID string, company string) error {
     exists, err := s.UserAssetExists(ctx, username)
     if err != nil {
         return err
@@ -103,10 +104,6 @@ func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterf
         return fmt.Errorf("user asset with username %s already exists", username)
     }
 
-    // err = s.CreateBankAccountAsset(ctx, bankAccountNo, centralBankID, 0, username)
-    // if err != nil {
-    //     return err
-    // }
 
     userAsset := UserAsset{
         Contracts:     []ContractAsset{},
@@ -115,6 +112,7 @@ func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterf
         Username:      username,
         Name:          name,
         Password:      password,
+        Bank:          bank,
         BankAccountNo: bankAccountNo,
         CentralBankID: centralBankID,
         Company:       company,
@@ -168,67 +166,21 @@ func (s *SmartContract) GetUserAsset(ctx contractapi.TransactionContextInterface
     return &userAsset, nil
 }
 
-// // CreateBankAccountAsset creates a new bank account asset
-// func (s *SmartContract) CreateBankAccountAsset(ctx contractapi.TransactionContextInterface, accountNo string, centralBank string, funds int, owner string) error {
-//     exists, err := s.BankAccountAssetExists(ctx, accountNo)
-//     if err != nil {
-//         return err
-//     }
-//     if exists {
-//         return fmt.Errorf("bank account asset with account number %s already exists", accountNo)
-//     }
 
-//     bankAccountAsset := BankAccountAsset{
-//         AccountNo:   accountNo,
-//         CentralBank: centralBank,
-//         Funds:       funds,
-//         Owner:       owner,
-//     }
-
-//     bankAccountAssetJSON, err := json.Marshal(bankAccountAsset)
-//     if err != nil {
-//         return err
-//     }
-
-//     return ctx.GetStub().PutState(accountNo, bankAccountAssetJSON)
-// }
-
-// // GetBankAccountAsset retrieves a bank account asset by account number
-// func (s *SmartContract) GetBankAccountAsset(ctx contractapi.TransactionContextInterface, accountNo string) (*BankAccountAsset, error) {
-//     bankAccountAssetJSON, err := ctx.GetStub().GetState(accountNo)
-//     if err != nil {
-//         return nil, fmt.Errorf("failed to read bank account asset from world state: %v", err)
-//     }
-//     if bankAccountAssetJSON == nil {
-//         return nil, fmt.Errorf("bank account asset with account number %s does not exist", accountNo)
-//     }
-
-//     var bankAccountAsset BankAccountAsset
-//     err = json.Unmarshal(bankAccountAssetJSON, &bankAccountAsset)
-//     if err != nil {
-//         return nil, err
-//     }
-
-//     return &bankAccountAsset, nil
-// }
-
-
-// // BankAccountAssetExists checks if a bank account asset exists in the world state
-// func (s *SmartContract) BankAccountAssetExists(ctx contractapi.TransactionContextInterface, accountNo string) (bool, error) {
-//     bankAccountAssetJSON, err := ctx.GetStub().GetState(accountNo)
-//     if err != nil {
-//         return false, fmt.Errorf("failed to read bank account asset from world state: %v", err)
-//     }
-
-//     return bankAccountAssetJSON != nil, nil
-// }
 
 // CreateContractAsset creates a new contract asset and adds it to the user's asset
-func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, manager string, contractor string, duration int, interval int, ratePerInterval int, rateCurrency string, natureOfWork string) error {
-    userAsset, err := s.GetUserAsset(ctx, contractor)
+func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, manager string, contractor string, duration int, interval int, ratePerInterval int, natureOfWork string) error {
+    contractorAsset, err := s.GetUserAsset(ctx, contractor)
     if err != nil {
         return err
     }
+
+    managerAsset, err := s.GetUserAsset(ctx, manager)
+    if err != nil {
+        return err
+    }
+
+    rateCurrency := managerAsset.CentralBankID
 
     
     contractNo, err := s.GetContractNo(ctx)
@@ -256,10 +208,10 @@ func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextIn
     }
 
     // Append the contract to the Requests array of the user
-    userAsset.Requests = append(userAsset.Requests, contract)
+    contractorAsset.Requests = append(contractorAsset.Requests, contract)
 
     // Marshal the updated user asset
-    userAssetJSON, err := json.Marshal(userAsset)
+    userAssetJSON, err := json.Marshal(contractorAsset)
     if err != nil {
         return err
     }
