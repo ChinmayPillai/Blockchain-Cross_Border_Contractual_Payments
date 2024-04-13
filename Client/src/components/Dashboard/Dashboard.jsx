@@ -1,7 +1,7 @@
 import { Typography, Container } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { dashboardUrlBase, bankAccountUrl } from "../../Util/apiUrls";
+import { dashboardUrlBase, bankAccountUrlBase } from "../../Util/apiUrls";
 
 export default function Dashboard() {
     const user = localStorage.getItem("username");
@@ -14,7 +14,7 @@ export default function Dashboard() {
     const [funds, setFunds] = useState(0);
 
     const userAsseturl = dashboardUrlBase + user;
-    const bankAccounturl = bankAccountUrl + user;
+    const bankAccounturl = bankAccountUrlBase + user;
 
     useEffect(() => {
         axios.get(userAsseturl)
@@ -23,7 +23,7 @@ export default function Dashboard() {
         axios.get(bankAccounturl)
         .then((response) => setFunds(response.data.funds))
         .catch((error) => console.error(error));
-    }, [user]);
+    }, []);
 
 
 
