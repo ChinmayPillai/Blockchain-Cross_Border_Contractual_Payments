@@ -228,7 +228,7 @@ async function main(): Promise<void> {
             const { currencyFrom, currencyTo, amount } = req.body;
             try {
                 // Call the InvokeForex function on the smart contract.
-                const result = await invokeForex(contract1, currencyFrom, currencyTo, amount);
+                const result = await invokeForex(bankContract, currencyFrom, currencyTo, amount);
                 res.status(200).json({ message: 'Forex invoked successfully', result });
             } catch (error) {
                 console.error('Error invoking forex:', error);
