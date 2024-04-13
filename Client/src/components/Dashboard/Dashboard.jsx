@@ -14,15 +14,21 @@ export default function Dashboard() {
     const [funds, setFunds] = useState(0);
 
     const userAsseturl = dashboardUrlBase + user;
-    const bankAccounturl = bankAccountUrlBase + user;
 
     useEffect(() => {
         axios.get(userAsseturl)
-        .then((response) => setUserAsset(response.data))
+        .then((response) => {
+            setUserAsset(response.data)
+            axios.get(bankAccountUrlBase + response.data.bankAccountNo, {
+                bank: response.data.bank
+            })
+            .then((response) => {
+                setFunds(response.data.balance)
+            })
+            .catch((error) => console.error(error));
+        })
         .catch((error) => console.error(error));
-        axios.get(bankAccounturl)
-        .then((response) => setFunds(response.data.funds))
-        .catch((error) => console.error(error));
+
     }, []);
 
 
