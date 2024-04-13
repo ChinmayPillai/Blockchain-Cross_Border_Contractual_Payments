@@ -22,6 +22,7 @@ type UserAsset struct {
     Username      string          `json:"username"` // Unique primary key
     Name          string          `json:"name"`
     Password      string          `json:"password"`
+    Bank          string          `json:"bank"`
     BankAccountNo string          `json:"bankAccountNo"`
     CentralBankID string          `json:"centralBankID"`
     Company       string          `json:"company"`
@@ -94,7 +95,7 @@ func (s *SmartContract) IncrementContractNo(ctx contractapi.TransactionContextIn
 }
 
 // CreateUserAsset creates a new user asset
-func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterface, username string, name string, password string, bankAccountNo string, centralBankID string, company string) error {
+func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterface, username string, name string, password string, bank string, bankAccountNo string, centralBankID string, company string) error {
     exists, err := s.UserAssetExists(ctx, username)
     if err != nil {
         return err
@@ -111,6 +112,7 @@ func (s *SmartContract) CreateUserAsset(ctx contractapi.TransactionContextInterf
         Username:      username,
         Name:          name,
         Password:      password,
+        Bank:          bank,
         BankAccountNo: bankAccountNo,
         CentralBankID: centralBankID,
         Company:       company,
@@ -167,11 +169,18 @@ func (s *SmartContract) GetUserAsset(ctx contractapi.TransactionContextInterface
 
 
 // CreateContractAsset creates a new contract asset and adds it to the user's asset
-func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, manager string, contractor string, duration int, interval int, ratePerInterval int, rateCurrency string, natureOfWork string) error {
-    userAsset, err := s.GetUserAsset(ctx, contractor)
+func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, manager string, contractor string, duration int, interval int, ratePerInterval int, natureOfWork string) error {
+    contractorAsset, err := s.GetUserAsset(ctx, contractor)
     if err != nil {
         return err
     }
+
+    managerAsset, err := s.GetUserAsset(ctx, manager)
+    if err != nil {
+        return err
+    }
+
+    rateCurrency := managerAsset.CentralBankID
 
     
     contractNo, err := s.GetContractNo(ctx)
@@ -199,10 +208,10 @@ func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextIn
     }
 
     // Append the contract to the Requests array of the user
-    userAsset.Requests = append(userAsset.Requests, contract)
+    contractorAsset.Requests = append(contractorAsset.Requests, contract)
 
     // Marshal the updated user asset
-    userAssetJSON, err := json.Marshal(userAsset)
+    userAssetJSON, err := json.Marshal(contractorAsset)
     if err != nil {
         return err
     }
