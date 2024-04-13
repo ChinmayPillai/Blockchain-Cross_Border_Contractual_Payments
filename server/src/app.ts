@@ -106,14 +106,14 @@ async function main(): Promise<void> {
         });
 
         app.post('/register', async (req:any, res:any) => {
-            const { username, name, password, bankAccount, centralBank, company } = req.body;
+            const { username, name, password, bank, bankAccount, centralBank, company } = req.body;
             try {
                 // Hash the password
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(password, salt);
 
                 // Call the CreateUserAsset function on the smart contract.
-                await createUserAsset(contract, username, name, hashedPassword, bankAccount, centralBank, company);
+                await createUserAsset(contract, username, name, hashedPassword, bank, bankAccount, centralBank, company);
                 res.status(200).json({ message: 'User asset created successfully' });
             } catch (error) {
                 console.error('Error creating user asset:', error);
@@ -200,10 +200,10 @@ async function main(): Promise<void> {
         });
 
         app.post('/createContractAsset', async (req:any, res:any) => {
-            const { manager, contractor, duration, interval, ratePerInterval, rateCurrency, natureOfWork } = req.body;
+            const { manager, contractor, duration, interval, ratePerInterval, natureOfWork } = req.body;
             try {
                 // Call the CreateContractAsset function on the smart contract.
-                await createContractAsset(contract, manager, contractor, duration, interval, ratePerInterval, rateCurrency, natureOfWork);
+                await createContractAsset(contract, manager, contractor, duration, interval, ratePerInterval, natureOfWork);
                 res.status(200).json({ message: 'Contract asset created successfully' });
             } catch (error) {
                 console.error('Error creating contract asset:', error);
@@ -288,7 +288,7 @@ async function initLedger(contract: Contract): Promise<void> {
     console.log('*** Transaction committed successfully');
 }
 
-async function createUserAsset(contract: Contract, username: string, name: string, password: string, bankAccountNo: string, centralBankID: string, company: string): Promise<void> {
+async function createUserAsset(contract: Contract, username: string, name: string, password: string, bank: string, bankAccountNo: string, centralBankID: string, company: string): Promise<void> {
     console.log('\n--> Submit Transaction: CreateUserAsset, function creates the initial set of assets on the ledger');
 
      await contract.submitTransaction(
@@ -296,6 +296,7 @@ async function createUserAsset(contract: Contract, username: string, name: strin
         username,
         name,
         password,
+        bank,
         bankAccountNo,
         centralBankID,
         company
@@ -361,7 +362,7 @@ async function getPendingContracts(contract: Contract, username: string): Promis
     return result;
 }
 
-async function createContractAsset(contract: Contract, manager: string, contractor: string, duration: string, interval: string, ratePerInterval: string, rateCurrency: string, natureOfWork: string): Promise<void> {
+async function createContractAsset(contract: Contract, manager: string, contractor: string, duration: string, interval: string, ratePerInterval: string, natureOfWork: string): Promise<void> {
     console.log('\n--> Submit Transaction: CreateContractAsset, function creates a new contract asset on the ledger');
     await contract.submitTransaction(
         'CreateContractAsset',
@@ -370,7 +371,6 @@ async function createContractAsset(contract: Contract, manager: string, contract
         duration,
         interval,
         ratePerInterval,
-        rateCurrency,
         natureOfWork
     );
 }
