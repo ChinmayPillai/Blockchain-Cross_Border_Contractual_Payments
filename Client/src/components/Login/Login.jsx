@@ -1,7 +1,7 @@
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Add this import statement
+import { TextField, MenuItem } from "@mui/material";
 import {
   MDBContainer,
   MDBTabs,
@@ -22,6 +22,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [bankAccount, setBankAccount] = useState("");
+  const [bank, setBank] = useState("");
   const [centralBank, setCentralBank] = useState("");
   const [company, setCompany] = useState("");
 
@@ -61,6 +62,7 @@ function Login() {
         username: username,
         password: password,
         bankAccount: bankAccount,
+        bank: bank,
         centralBank: centralBank,
         company: company
        })
@@ -110,6 +112,7 @@ function Login() {
                 placeholder="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
               />
               <MDBInput
                 wrapperClass="mb-4"
@@ -118,6 +121,7 @@ function Login() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <MDBBtn className="mb-4 w-100">Sign in</MDBBtn>
             </form>
@@ -140,6 +144,7 @@ function Login() {
               placeholder="Chinmay Pillai"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
             />
             <MDBInput
               wrapperClass="mb-4"
@@ -149,6 +154,7 @@ function Login() {
               placeholder="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
             <MDBInput
               wrapperClass="mb-4"
@@ -158,6 +164,7 @@ function Login() {
               placeholder="abc@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
             <MDBInput
               wrapperClass="mb-4"
@@ -166,6 +173,7 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
             <MDBInput
               wrapperClass="mb-4"
@@ -175,16 +183,32 @@ function Login() {
               placeholder="BankAccount123"
               value={bankAccount}
               onChange={(e) => setBankAccount(e.target.value)}
+              required
             />
-            <MDBInput
-              wrapperClass="mb-4"
-              label="Central Bank"
-              id="centralBank"
-              type="text"
-              placeholder="USDCentralBank"
+            <TextField
+              select
+              label="Bank"
+              value={bank}
+              onChange={(e) => setBank(e.target.value)}
+              fullWidth
+              className="mb-4"
+              required
+            >
+              <MenuItem value="ADFC">ADFC Bank</MenuItem>
+              <MenuItem value="IBIBI">IBIBI Bank</MenuItem>
+            </TextField>
+            <TextField
+              select
+              label="centralBank"
               value={centralBank}
               onChange={(e) => setCentralBank(e.target.value)}
-            />
+              fullWidth
+              className="mb-4"
+              required
+            >
+              <MenuItem value="USD">USD</MenuItem>
+              <MenuItem value="INR">INR</MenuItem>
+            </TextField>
             <MDBInput
               wrapperClass="mb-4"
               label="Company"
@@ -193,6 +217,7 @@ function Login() {
               placeholder="Company123"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
+              required
             />
 
             <MDBBtn className="mb-4 w-100">Sign up</MDBBtn>
