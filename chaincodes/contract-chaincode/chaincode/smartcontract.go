@@ -381,3 +381,143 @@ func (s *SmartContract) GetContracts(ctx contractapi.TransactionContextInterface
 	}
 	return userAsset.Contracts, nil
 }
+
+func (s *SmartContract) RemoveFromRequestedOfContractor(ctx contractapi.TransactionContextInterface, contractId int, contractor string) error {
+	// Get contractor's user asset
+	contractorAsset, err := s.GetUserAsset(ctx, contractor)
+	if err != nil {
+		return err
+	}
+
+	// Find the contract in the Requests array of the contractor
+	var contractIndex int
+	var found bool
+	for i, contract := range contractorAsset.Requests {
+		if contract.ContractId == contractId {
+			contractIndex = i
+			found = true
+			break
+		}
+	}
+	if !found {
+		return fmt.Errorf("contract not found in the requests of contractor")
+	}
+
+	// Remove the contract from the Requests array of contractor
+	contractorAsset.Requests = append(contractorAsset.Requests[:contractIndex], contractorAsset.Requests[contractIndex+1:]...)
+
+	// Update contractor's user asset in the world state
+	contractorAssetJSON, err := json.Marshal(contractorAsset)
+	if err != nil {
+		return err
+	}
+	if err := ctx.GetStub().PutState(contractor, contractorAssetJSON); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *SmartContract) RemoveFromPendingOfManager(ctx contractapi.TransactionContextInterface, contractId int, manager string) error {
+	// Get manager's user asset
+	managerAsset, err := s.GetUserAsset(ctx, manager)
+	if err != nil {
+		return err
+	}
+
+	// Find the contract in the Pending array of manager
+	var contractIndex int
+	var found bool
+	for i, contract := range managerAsset.Pending {
+		if contract.ContractId == contractId {
+			contractIndex = i
+			found = true
+			break
+		}
+	}
+	if !found {
+		return fmt.Errorf("contract not found in the pending of manager")
+	}
+
+	// Remove the contract from the Pending array of manager
+	managerAsset.Pending = append(managerAsset.Pending[:contractIndex], managerAsset.Pending[contractIndex+1:]...)
+
+	// Update manager's user asset in the world state
+	managerAssetJSON, err := json.Marshal(managerAsset)
+	if err != nil {
+		return err
+	}
+	if err := ctx.GetStub().PutState(manager, managerAssetJSON); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *SmartContract) Revoke(ctx contractapi.TransactionContextInterface, contractId int, manager string, contractor string) error {
+	// Get manager's user asset
+	managerAsset, err := s.GetUserAsset(ctx, manager)
+	if err != nil {
+		return err
+	}
+
+	// Find the contract in the Contracts array of manager
+	var managerContractIndex int
+	var foundManager bool
+	for i, contract := range managerAsset.Contracts {
+		if contract.ContractId == contractId {
+			managerContractIndex = i
+			foundManager = true
+			break
+		}
+	}
+	if !foundManager {
+		return fmt.Errorf("contract not found in the contracts of manager")
+	}
+
+	// Remove the contract from the Contracts array of manager
+	managerAsset.Contracts = append(managerAsset.Contracts[:managerContractIndex], managerAsset.Contracts[managerContractIndex+1:]...)
+
+	// Get contractor's user asset
+	contractorAsset, err := s.GetUserAsset(ctx, contractor)
+	if err != nil {
+		return err
+	}
+
+	// Find the contract in the Contracts array of contractor
+	var contractorContractIndex int
+	var foundContractor bool
+	for i, contract := range contractorAsset.Contracts {
+		if contract.ContractId == contractId {
+			contractorContractIndex = i
+			foundContractor = true
+			break
+		}
+	}
+	if !foundContractor {
+		return fmt.Errorf("contract not found in the contracts of contractor")
+	}
+
+	// Remove the contract from the Contracts array of contractor
+	contractorAsset.Contracts = append(contractorAsset.Contracts[:contractorContractIndex], contractorAsset.Contracts[contractorContractIndex+1:]...)
+
+	// Update manager's user asset in the world state
+	managerAssetJSON, err := json.Marshal(managerAsset)
+	if err != nil {
+		return err
+	}
+	if err := ctx.GetStub().PutState(manager, managerAssetJSON); err != nil {
+		return err
+	}
+
+	// Update contractor's user asset in the world state
+	contractorAssetJSON, err := json.Marshal(contractorAsset)
+	if err != nil {
+		return err
+	}
+	if err := ctx.GetStub().PutState(contractor, contractorAssetJSON); err != nil {
+		return err
+	}
+
+	return nil
+}
