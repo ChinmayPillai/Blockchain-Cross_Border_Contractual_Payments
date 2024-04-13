@@ -21,6 +21,7 @@ sudo ./network.sh deployCC -ccn basic -ccp ../../chaincodes/contract-chaincode -
 
 sudo ./network.sh createChannel -c channel1
 sudo ./network.sh deployCC -ccn basic -ccp ../../chaincodes/bank-chaincode -c channel1 -ccl go
+sudo ./network.sh deployCC -ccn forex -ccp ../../chaincodes/forex-chaincode -c channel1 -ccl go
 
 sudo bash
 
