@@ -264,7 +264,7 @@ async function main(): Promise<void> {
         });
 
 
-        app.post('/revoke', async (req:any, res:any) => {
+        app.put('/revoke', async (req:any, res:any) => {
             const { contractId, manager, contractor } = req.body;
             try {
                 // Call the revoke function on the smart contract.
@@ -276,7 +276,7 @@ async function main(): Promise<void> {
             }
         });
         
-        app.post('/removeFromPendingOfManager', async (req:any, res:any) => {
+        app.put('/removeFromPendingOfManager', async (req:any, res:any) => {
             const { contractId, manager } = req.body;
             try {
                 // Call the removeFromPendingOfManager function on the smart contract.
@@ -288,7 +288,7 @@ async function main(): Promise<void> {
             }
         });
         
-        app.post('/removeFromRequestedOfContractor', async (req:any, res:any) => {
+        app.put('/removeFromRequestedOfContractor', async (req:any, res:any) => {
             const { contractId, contractor } = req.body;
             try {
                 // Call the removeFromRequestedOfContractor function on the smart contract.
