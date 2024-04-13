@@ -46,6 +46,8 @@ type ContractAsset struct {
 	RatePerInterval      int    `json:"ratePerInterval"`
 	RateCurrency         string `json:"rateCurrency"`
 	NatureOfWork         string `json:"natureOfWork"`
+	StartDate            string `json:"startDate"`
+	LastPaymentDate      string `json:"lastPaymentDate"`
 	ManagerBank          string `json:"managerBank"`
 	ManagerBankAccountNo string `json:"managerBankAccountNo"`
 	ContractorAccount    string `json:"contractorAccount"`
@@ -169,7 +171,7 @@ func (s *SmartContract) GetUserAsset(ctx contractapi.TransactionContextInterface
 }
 
 // CreateContractAsset creates a new contract asset and adds it to the user's asset
-func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, manager string, contractor string, duration int, interval int, ratePerInterval int, natureOfWork string) error {
+func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextInterface, manager string, contractor string, duration int, interval int, ratePerInterval int, natureOfWork string, startDate string) error {
 	contractorAsset, err := s.GetUserAsset(ctx, contractor)
 	if err != nil {
 		return err
@@ -199,6 +201,8 @@ func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextIn
 		RatePerInterval:      ratePerInterval,
 		RateCurrency:         rateCurrency,
 		NatureOfWork:         natureOfWork,
+		StartDate:            startDate,
+		LastPaymentDate:      startDate,
 		ManagerBank:          managerBank,
 		ManagerBankAccountNo: managerBankAccountNo,
 		ContractorAccount:    "",
