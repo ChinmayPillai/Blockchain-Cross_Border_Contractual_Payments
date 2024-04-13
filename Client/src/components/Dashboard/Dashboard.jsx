@@ -17,7 +17,7 @@ export default function Dashboard() {
     const bankAccounturl = bankAccountUrl + user;
 
     useEffect(() => {
-        axios.get(url)
+        axios.get(userAsseturl)
         .then((response) => setUserAsset(response.data))
         .catch((error) => console.error(error));
         // axios.get(bankAccounturl)
