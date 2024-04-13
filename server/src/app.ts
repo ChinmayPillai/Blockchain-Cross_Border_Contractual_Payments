@@ -318,6 +318,18 @@ async function main(): Promise<void> {
             }
         });
         
+
+        app.post('/pay', async (req:any, res:any) => {
+            const { currencyFrom, currencyTo, amount, bankFrom, bankAccountFrom, bankTo, bankAccountTo } = req.body;
+            try {
+                // Call the pay function on the smart contract.
+                await pay(contractMap.get(bankFrom), currencyFrom, currencyTo, amount, bankAccountFrom, bankTo, bankAccountTo);
+                res.status(200).json({ message: 'Payment successful' });
+            } catch (error) {
+                console.error('Error making payment:', error);
+                res.status(500).json({ error: 'Failed to make payment' });
+            }
+        });
         
 
     }
@@ -524,6 +536,20 @@ async function removeFromPendingOfManager(contract: Contract, contractId: number
 async function removeFromRequestedOfContractor(contract: Contract, contractId: number, contractor: string): Promise<void> {
     console.log(`\n--> Submit Transaction: RemoveFromRequestedOfContractor, function removes a contract from the requested array of contractor`);
     await contract.submitTransaction('RemoveFromRequestedOfContractor', contractId.toString(), contractor);
+    console.log('*** Transaction committed successfully');
+}
+
+async function pay(contract: Contract, currencyFrom: string, currencyTo: string, amount: number, bankAccountFrom: string, bankTo: string, bankAccountTo: string): Promise<void> {
+    console.log('\n--> Submit Transaction: Pay, function pays the specified amount from one bank account to another');
+    await contract.submitTransaction(
+        'Pay',
+        currencyFrom,
+        currencyTo,
+        amount.toString(),
+        bankAccountFrom,
+        bankTo,
+        bankAccountTo
+    );
     console.log('*** Transaction committed successfully');
 }
 
