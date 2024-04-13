@@ -1,4 +1,4 @@
-import { Typography, Button, Grid, TextField } from "@mui/material";
+import { Typography, Button, Grid, TextField, MenuItem } from "@mui/material";
 import { acceptByContractorURL } from "../../Util/apiUrls";
 import axios from 'axios'
 import { useState } from "react";
@@ -75,11 +75,15 @@ export default function ContractCard({ contract }) {
                     />
                     <br />
                     <TextField
+                        select
                         label="Payment Currency"
                         value={paymentCurrency}
                         onChange={(e) => setPaymentCurrency(e.target.value)}
                         required
-                    />
+                    >
+                        <MenuItem value="USD">USD</MenuItem>
+                        <MenuItem value="INR">INR</MenuItem>
+                    </TextField>
                     <br />
                     <Button type="submit" variant="contained" color="success">
                         Confirm Accept
