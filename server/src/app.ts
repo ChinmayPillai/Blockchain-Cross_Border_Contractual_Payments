@@ -118,6 +118,7 @@ async function main(): Promise<void> {
 
                 // Call the CreateUserAsset function on the smart contract.
                 await createUserAsset(contract, username, name, hashedPassword, bank, bankAccount, centralBank, company);
+                await createBankAccountAsset(bankContract, bankAccount, centralBank, 10000, username);
                 res.status(200).json({ message: 'User asset created successfully' });
             } catch (error) {
                 console.error('Error creating user asset:', error);
