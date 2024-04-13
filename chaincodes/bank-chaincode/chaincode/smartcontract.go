@@ -3,6 +3,7 @@ package chaincode
 import (
     "encoding/json"
     "fmt"
+    "strconv"
 
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -83,4 +84,24 @@ func (s *SmartContract) BankAccountAssetExists(ctx contractapi.TransactionContex
     }
 
     return bankAccountAssetJSON != nil, nil
+}
+
+func (s *SmartContract) InvokeForex(ctx contractapi.TransactionContextInterface, currencyFrom string, currencyTo string, amount int) (int, error) {
+    
+    fcn := "Forex"
+
+    args := [][]byte{[]byte(fcn), []byte(currencyFrom), []byte(currencyTo), []byte(fmt.Sprintf("%d", amount))}
+
+    response := ctx.GetStub().InvokeChaincode("forex", args, "")
+
+    if response.GetStatus() != 200 {
+        return 0, fmt.Errorf("forex chaincode returned %d", response.GetStatus())
+    }
+
+    payload, err := strconv.Atoi(string(response.GetPayload()))
+    if err != nil {
+        return 0, err
+    }
+
+    return payload, nil
 }
