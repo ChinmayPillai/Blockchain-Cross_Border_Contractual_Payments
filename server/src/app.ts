@@ -223,6 +223,18 @@ async function main(): Promise<void> {
                 res.status(500).json({ error: 'Failed to create bank account asset' });
             }
         });
+
+        app.get('/invokeForex', async (req:any, res:any) => {
+            const { currencyFrom, currencyTo, amount } = req.body;
+            try {
+                // Call the InvokeForex function on the smart contract.
+                const result = await invokeForex(contract1, currencyFrom, currencyTo, amount);
+                res.status(200).json({ message: 'Forex invoked successfully', result });
+            } catch (error) {
+                console.error('Error invoking forex:', error);
+                res.status(500).json({ error: 'Failed to invoke forex' });
+            }
+        });
         
 
     }
@@ -391,6 +403,15 @@ async function createBankAccountAsset(contract: Contract, accountNo: string, cen
     console.log('\n--> Submit Transaction: CreateBankAccountAsset, function creates a new bank account asset on the ledger');
     await contract.submitTransaction('CreateBankAccountAsset', accountNo, centralBank, funds.toString(), owner);
     console.log('*** Transaction committed successfully');
+}
+
+async function invokeForex(contract: Contract, currencyFrom: string, currencyTo: string, amount: number): Promise<number> {
+    console.log('\n--> Submit Transaction: InvokeForex, function invokes the forex smart contract');
+    const resultBytes = await contract.evaluateTransaction('InvokeForex', currencyFrom, currencyTo, amount.toString());
+    const resultJson = utf8Decoder.decode(resultBytes);
+    const result = JSON.parse(resultJson);
+    console.log('*** Result:', result);
+    return result;
 }
 
 /**
