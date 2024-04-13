@@ -43,6 +43,8 @@ const peerHostAlias = envOrDefault('PEER_HOST_ALIAS', 'peer0.org1.example.com');
 const utf8Decoder = new TextDecoder();
 const assetId = `asset${Date.now()}`;
 
+
+
 async function main(): Promise<void> {
 
     await displayInputParameters();
@@ -76,15 +78,30 @@ async function main(): Promise<void> {
 
         // Get the smart contract from the network.
         const contract = network.getContract(chaincodeName);
-        const bankContract = bankNetwork.getContract('bank');
+        const adfcContract = bankNetwork.getContract('adfc');
+        const ibibiContract = bankNetwork.getContract('ibibi');
         const forexContract = bankNetwork.getContract('forex');
-        const centralBankContract = bankNetwork.getContract('cbnk');
+        const usdContract = bankNetwork.getContract('usd');
+        const inrContract = bankNetwork.getContract('inr');
+
+
+        const contractMap = new Map<string, any>();
+        contractMap.set('adfc', adfcContract);
+        contractMap.set('ibibi', ibibiContract);
+        contractMap.set('usd', usdContract);
+        contractMap.set('inr', inrContract);
+        contractMap.set('ADFC', adfcContract);
+        contractMap.set('IBIBI', ibibiContract);
+        contractMap.set('USD', usdContract);
+        contractMap.set('INR', inrContract);
 
         // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
         await initLedger(contract);
-        await initLedger(bankContract);
+        await initLedger(adfcContract);
+        await initLedger(ibibiContract);
         await initLedger(forexContract);
-        await initLedger(centralBankContract);
+        await initLedger(usdContract);
+        await initLedger(inrContract);
 
         app.post('/acceptByContractor', async (req:any, res:any) => {
             const { contractId, contractor, manager, contractorAccount, paymentCurrency } = req.body;
@@ -118,7 +135,7 @@ async function main(): Promise<void> {
 
                 // Call the CreateUserAsset function on the smart contract.
                 await createUserAsset(contract, username, name, hashedPassword, bank, bankAccount, centralBank, company);
-                await createBankAccountAsset(bankContract, bankAccount, centralBank, 10000, username);
+                await createBankAccountAsset(contractMap.get(bank), bankAccount, centralBank, 10000, username);
                 res.status(200).json({ message: 'User asset created successfully' });
             } catch (error) {
                 console.error('Error creating user asset:', error);
@@ -158,9 +175,10 @@ async function main(): Promise<void> {
 
         app.get('/bankAccountAsset/:accountNo', async (req:any, res:any) => {
             const { accountNo } = req.params;
+            const { bank } = req.body;
             try {
                 // Call the GetBankAccountAsset function on the smart contract.
-                const result = await getBankAccountAsset(bankContract, accountNo);
+                const result = await getBankAccountAsset(contractMap.get(bank) , accountNo);
                 res.status(200).json(result);
             } catch (error) {
                 console.error('Error getting bank account asset:', error);
@@ -218,10 +236,10 @@ async function main(): Promise<void> {
 
 
         app.post('/createBankAccountAsset', async (req:any, res:any) => {
-            const { accountNo, centralBank, funds, owner } = req.body;
+            const { accountNo, centralBank, funds, owner, bank } = req.body;
             try {
                 // Call the createBankAccountAsset function on the smart contract.
-                await createBankAccountAsset(bankContract, accountNo, centralBank, funds, owner);
+                await createBankAccountAsset(contractMap.get(bank), accountNo, centralBank, funds, owner);
                 res.status(200).json({ message: 'Bank account asset created successfully' });
             } catch (error) {
                 console.error('Error creating bank account asset:', error);
@@ -233,7 +251,7 @@ async function main(): Promise<void> {
             const { currencyFrom, currencyTo, amount } = req.body;
             try {
                 // Call the InvokeForex function on the smart contract.
-                const result = await invokeForex(centralBankContract, currencyFrom, currencyTo, amount);
+                const result = await invokeForex(usdContract, currencyFrom, currencyTo, amount);
                 res.status(200).json({ message: 'Forex invoked successfully', result });
             } catch (error) {
                 console.error('Error invoking forex:', error);
@@ -242,9 +260,9 @@ async function main(): Promise<void> {
         });
 
         app.put('/addFunds', async (req:any, res:any) => {
-            const { accountNo, amount } = req.body;
+            const { accountNo, amount, bank } = req.body;
             try {
-                await addFunds(bankContract, accountNo, amount);
+                await addFunds(contractMap.get(bank), accountNo, amount);
                 res.status(200).json({ message: 'Funds added successfully' });
             } catch (error) {
                 console.error('Error adding funds:', error);
@@ -253,9 +271,9 @@ async function main(): Promise<void> {
         });
         
         app.put('/removeFunds', async (req:any, res:any) => {
-            const { accountNo, amount } = req.body;
+            const { accountNo, amount, bank } = req.body;
             try {
-                await removeFunds(bankContract, accountNo, amount);
+                await removeFunds(contractMap.get(bank), accountNo, amount);
                 res.status(200).json({ message: 'Funds removed successfully' });
             } catch (error) {
                 console.error('Error removing funds:', error);
@@ -268,7 +286,7 @@ async function main(): Promise<void> {
             const { contractId, manager, contractor } = req.body;
             try {
                 // Call the revoke function on the smart contract.
-                await revoke(bankContract, contractId, manager, contractor);
+                await revoke(contract, contractId, manager, contractor);
                 res.status(200).json({ message: 'Contract revoked successfully' });
             } catch (error) {
                 console.error('Error revoking contract:', error);
@@ -280,7 +298,7 @@ async function main(): Promise<void> {
             const { contractId, manager } = req.body;
             try {
                 // Call the removeFromPendingOfManager function on the smart contract.
-                await removeFromPendingOfManager(bankContract, contractId, manager);
+                await removeFromPendingOfManager(contract, contractId, manager);
                 res.status(200).json({ message: 'Contract removed from pending successfully' });
             } catch (error) {
                 console.error('Error removing contract from pending:', error);
@@ -292,7 +310,7 @@ async function main(): Promise<void> {
             const { contractId, contractor } = req.body;
             try {
                 // Call the removeFromRequestedOfContractor function on the smart contract.
-                await removeFromRequestedOfContractor(bankContract, contractId, contractor);
+                await removeFromRequestedOfContractor(contract, contractId, contractor);
                 res.status(200).json({ message: 'Contract removed from requested successfully' });
             } catch (error) {
                 console.error('Error removing contract from requested:', error);
