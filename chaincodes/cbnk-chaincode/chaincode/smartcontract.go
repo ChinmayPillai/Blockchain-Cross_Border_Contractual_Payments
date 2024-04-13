@@ -54,6 +54,8 @@ func (s *SmartContract) Recieve(ctx contractapi.TransactionContextInterface, ban
     if response.GetStatus() != 200 {
         return fmt.Errorf("bank chaincode returned %d", response.GetStatus())
     }
+
+    return nil
     
 }
 
