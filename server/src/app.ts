@@ -262,6 +262,44 @@ async function main(): Promise<void> {
                 res.status(500).json({ error: 'Failed to remove funds' });
             }
         });
+
+
+        app.post('/revoke', async (req:any, res:any) => {
+            const { contractId, manager, contractor } = req.body;
+            try {
+                // Call the revoke function on the smart contract.
+                await revoke(bankContract, contractId, manager, contractor);
+                res.status(200).json({ message: 'Contract revoked successfully' });
+            } catch (error) {
+                console.error('Error revoking contract:', error);
+                res.status(500).json({ error: 'Failed to revoke contract' });
+            }
+        });
+        
+        app.post('/removeFromPendingOfManager', async (req:any, res:any) => {
+            const { contractId, manager } = req.body;
+            try {
+                // Call the removeFromPendingOfManager function on the smart contract.
+                await removeFromPendingOfManager(bankContract, contractId, manager);
+                res.status(200).json({ message: 'Contract removed from pending successfully' });
+            } catch (error) {
+                console.error('Error removing contract from pending:', error);
+                res.status(500).json({ error: 'Failed to remove contract from pending' });
+            }
+        });
+        
+        app.post('/removeFromRequestedOfContractor', async (req:any, res:any) => {
+            const { contractId, contractor } = req.body;
+            try {
+                // Call the removeFromRequestedOfContractor function on the smart contract.
+                await removeFromRequestedOfContractor(bankContract, contractId, contractor);
+                res.status(200).json({ message: 'Contract removed from requested successfully' });
+            } catch (error) {
+                console.error('Error removing contract from requested:', error);
+                res.status(500).json({ error: 'Failed to remove contract from requested' });
+            }
+        });
+        
         
 
     }
@@ -452,6 +490,27 @@ async function removeFunds(contract: Contract, accountNo: string, amount: number
     await contract.submitTransaction('RemoveFunds', accountNo, amount.toString());
     console.log('*** Transaction committed successfully');
 }
+
+async function revoke(contract: Contract, contractId: number, manager: string, contractor: string): Promise<void> {
+    console.log(`\n--> Submit Transaction: Revoke, function revokes a contract from both manager and contractor`);
+    await contract.submitTransaction('Revoke', contractId.toString(), manager, contractor);
+    console.log('*** Transaction committed successfully');
+}
+
+async function removeFromPendingOfManager(contract: Contract, contractId: number, manager: string): Promise<void> {
+    console.log(`\n--> Submit Transaction: RemoveFromPendingOfManager, function removes a contract from the pending array of manager`);
+    await contract.submitTransaction('RemoveFromPendingOfManager', contractId.toString(), manager);
+    console.log('*** Transaction committed successfully');
+}
+
+async function removeFromRequestedOfContractor(contract: Contract, contractId: number, contractor: string): Promise<void> {
+    console.log(`\n--> Submit Transaction: RemoveFromRequestedOfContractor, function removes a contract from the requested array of contractor`);
+    await contract.submitTransaction('RemoveFromRequestedOfContractor', contractId.toString(), contractor);
+    console.log('*** Transaction committed successfully');
+}
+
+
+
 /**
  * envOrDefault() will return the value of an environment variable, or a default value if the variable is undefined.
  */
