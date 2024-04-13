@@ -77,10 +77,14 @@ async function main(): Promise<void> {
         // Get the smart contract from the network.
         const contract = network.getContract(chaincodeName);
         const bankContract = bankNetwork.getContract(chaincodeName);
+        const forexContract = bankNetwork.getContract('forex');
+        const centralBankContract = bankNetwork.getContract('cbnk');
 
         // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
         await initLedger(contract);
         await initLedger(bankContract);
+        await initLedger(forexContract);
+        await initLedger(centralBankContract);
 
         app.post('/acceptByContractor', async (req:any, res:any) => {
             const { contractId, contractor, manager, contractorAccount, paymentCurrency } = req.body;
@@ -228,7 +232,7 @@ async function main(): Promise<void> {
             const { currencyFrom, currencyTo, amount } = req.body;
             try {
                 // Call the InvokeForex function on the smart contract.
-                const result = await invokeForex(bankContract, currencyFrom, currencyTo, amount);
+                const result = await invokeForex(centralBankContract, currencyFrom, currencyTo, amount);
                 res.status(200).json({ message: 'Forex invoked successfully', result });
             } catch (error) {
                 console.error('Error invoking forex:', error);
