@@ -20,9 +20,9 @@ export default function Dashboard() {
         axios.get(userAsseturl)
         .then((response) => setUserAsset(response.data))
         .catch((error) => console.error(error));
-        // axios.get(bankAccounturl)
-        // .then((response) => setFunds(response.data.funds))
-        // .catch((error) => console.error(error));
+        axios.get(bankAccounturl)
+        .then((response) => setFunds(response.data.funds))
+        .catch((error) => console.error(error));
     }, [user]);
 
 
