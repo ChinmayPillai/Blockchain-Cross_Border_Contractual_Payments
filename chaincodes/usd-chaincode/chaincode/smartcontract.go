@@ -61,7 +61,7 @@ func (s *SmartContract) Recieve(ctx contractapi.TransactionContextInterface, ban
     
 }
 
-func (s *SmartContract) PayCentralBnk(ctx contractapi.TransactionContextInterface, currencyFrom string, currencyTo string, amount int, bankAccount string) error {
+func (s *SmartContract) PayCentralBnk(ctx contractapi.TransactionContextInterface, currencyFrom string, currencyTo string, amount int, bank string, bankAccount string) error {
     
     toSend, err := s.InvokeForex(ctx, currencyFrom, currencyTo, amount)
     if err != nil {
@@ -70,7 +70,7 @@ func (s *SmartContract) PayCentralBnk(ctx contractapi.TransactionContextInterfac
 
     fcn := "Receive"
     centralBnk := strings.ToLower(currencyTo)
-    args := [][]byte{[]byte(fcn), []byte(bankAccount), []byte(fmt.Sprintf("%d", toSend))}
+    args := [][]byte{[]byte(fcn), []byte(bank), []byte(bankAccount), []byte(fmt.Sprintf("%d", toSend))}
 
     response := ctx.GetStub().InvokeChaincode(centralBnk, args, "")
 

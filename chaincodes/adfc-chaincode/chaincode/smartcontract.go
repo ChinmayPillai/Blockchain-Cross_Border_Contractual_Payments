@@ -3,6 +3,7 @@ package chaincode
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -136,3 +137,49 @@ func (s *SmartContract) RemoveFunds(ctx contractapi.TransactionContextInterface,
 	return ctx.GetStub().PutState(accountNo, bankAccountAssetJSON)
 }
 
+func (s *SmartContract) ForeignTransfer(ctx contractapi.TransactionContextInterface, currencyFrom string, currencyTo string, amount int, bank string, bankAccount string) error {
+	
+	fcn := "PayCentralBnk"
+	args := [][]byte{[]byte(fcn), []byte(currencyFrom), []byte(currencyTo), []byte(fmt.Sprintf("%d", amount)), []byte(bank), []byte(bankAccount)}
+
+	centralBnk := strings.ToLower(currencyTo)
+
+	response := ctx.GetStub().InvokeChaincode(centralBnk, args, "")
+
+	if response.GetStatus() != 200 {
+		return fmt.Errorf("central bank chaincode returned %d", response.GetStatus())
+	}
+
+	return nil	
+}
+
+func (s *SmartContract) Pay(ctx contractapi.TransactionContextInterface, currencyFrom string, currencyTo string, amount int, bankAccountFrom string, bankTo string, bankAccountTo string) error {
+
+	err := s.RemoveFunds(ctx, bankAccountFrom, amount)
+	if err != nil {
+		return err
+	}
+
+	if(currencyFrom == currencyTo){
+
+		fnc := "AddFunds"
+		args := [][]byte{[]byte(fnc), []byte(bankAccountTo), []byte(fmt.Sprintf("%d", amount))}
+
+		contract := strings.ToLower(bankTo)
+
+		response := ctx.GetStub().InvokeChaincode(contract, args, "")
+
+		if response.GetStatus() != 200 {
+			return fmt.Errorf("bank chaincode returned %d", response.GetStatus())
+		}
+
+		return nil
+	}
+
+	err = s.ForeignTransfer(ctx, currencyFrom, currencyTo, amount, bankTo, bankAccountTo)
+	if err != nil {
+		return err
+	}
+	
+	return nil
+}
