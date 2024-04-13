@@ -9,7 +9,6 @@ export default function NewContract() {
     const [duration, setDuration] = useState('');
     const [interval, setInterval] = useState('');
     const [ratePerInterval, setRatePerInterval] = useState('');
-    const [rateCurrency, setRateCurrency] = useState('');
     const [natureOfWork, setNatureOfWork] = useState('');
 
     const handleSubmit = async (e) => {
@@ -22,7 +21,6 @@ export default function NewContract() {
                 duration,
                 interval,
                 ratePerInterval,
-                rateCurrency,
                 natureOfWork,
             }).then(response => {
                 console.log(response.data.message);
@@ -85,14 +83,6 @@ export default function NewContract() {
                     value={ratePerInterval}
                     onChange={(e) => setRatePerInterval(e.target.value)}
                     placeholder="200"
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Rate Currency"
-                    value={rateCurrency}
-                    onChange={(e) => setRateCurrency(e.target.value)}
-                    placeholder="USD"
                     fullWidth
                     margin="normal"
                 />
