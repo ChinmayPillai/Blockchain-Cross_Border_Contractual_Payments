@@ -72,15 +72,15 @@ async function main(): Promise<void> {
     try {
         // Get a network instance representing the channel where the smart contract is deployed.
         const network = gateway.getNetwork(channelName);
-        const network1 = gateway.getNetwork(channelName1);
+        const bankNetwork = gateway.getNetwork(channelName1);
 
         // Get the smart contract from the network.
         const contract = network.getContract(chaincodeName);
-        const contract1 = network1.getContract(chaincodeName);
+        const bankContract = bankNetwork.getContract(chaincodeName);
 
         // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
         await initLedger(contract);
-        await initLedger(contract1);
+        await initLedger(bankContract);
 
         app.post('/acceptByContractor', async (req:any, res:any) => {
             const { contractId, contractor, manager, contractorAccount, paymentCurrency } = req.body;
@@ -155,7 +155,7 @@ async function main(): Promise<void> {
             const { accountNo } = req.params;
             try {
                 // Call the GetBankAccountAsset function on the smart contract.
-                const result = await getBankAccountAsset(contract1, accountNo);
+                const result = await getBankAccountAsset(bankContract, accountNo);
                 res.status(200).json(result);
             } catch (error) {
                 console.error('Error getting bank account asset:', error);
@@ -216,11 +216,33 @@ async function main(): Promise<void> {
             const { accountNo, centralBank, funds, owner } = req.body;
             try {
                 // Call the createBankAccountAsset function on the smart contract.
-                await createBankAccountAsset(contract1, accountNo, centralBank, funds, owner);
+                await createBankAccountAsset(bankContract, accountNo, centralBank, funds, owner);
                 res.status(200).json({ message: 'Bank account asset created successfully' });
             } catch (error) {
                 console.error('Error creating bank account asset:', error);
                 res.status(500).json({ error: 'Failed to create bank account asset' });
+            }
+        });
+
+        app.put('/addFunds', async (req:any, res:any) => {
+            const { accountNo, amount } = req.body;
+            try {
+                await addFunds(bankContract, accountNo, amount);
+                res.status(200).json({ message: 'Funds added successfully' });
+            } catch (error) {
+                console.error('Error adding funds:', error);
+                res.status(500).json({ error: 'Failed to add funds' });
+            }
+        });
+        
+        app.put('/removeFunds', async (req:any, res:any) => {
+            const { accountNo, amount } = req.body;
+            try {
+                await removeFunds(bankContract, accountNo, amount);
+                res.status(200).json({ message: 'Funds removed successfully' });
+            } catch (error) {
+                console.error('Error removing funds:', error);
+                res.status(500).json({ error: 'Failed to remove funds' });
             }
         });
         
@@ -393,6 +415,17 @@ async function createBankAccountAsset(contract: Contract, accountNo: string, cen
     console.log('*** Transaction committed successfully');
 }
 
+async function addFunds(contract: Contract, accountNo: string, amount: number): Promise<void> {
+    console.log(`\n--> Submit Transaction: AddFunds, function adds funds to bank account asset with account number: ${accountNo}`);
+    await contract.submitTransaction('AddFunds', accountNo, amount.toString());
+    console.log('*** Transaction committed successfully');
+}
+
+async function removeFunds(contract: Contract, accountNo: string, amount: number): Promise<void> {
+    console.log(`\n--> Submit Transaction: RemoveFunds, function removes funds from bank account asset with account number: ${accountNo}`);
+    await contract.submitTransaction('RemoveFunds', accountNo, amount.toString());
+    console.log('*** Transaction committed successfully');
+}
 /**
  * envOrDefault() will return the value of an environment variable, or a default value if the variable is undefined.
  */
