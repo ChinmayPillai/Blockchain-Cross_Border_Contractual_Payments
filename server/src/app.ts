@@ -76,7 +76,7 @@ async function main(): Promise<void> {
 
         // Get the smart contract from the network.
         const contract = network.getContract(chaincodeName);
-        const bankContract = bankNetwork.getContract(chaincodeName);
+        const bankContract = bankNetwork.getContract('bank');
         const forexContract = bankNetwork.getContract('forex');
         const centralBankContract = bankNetwork.getContract('cbnk');
 

@@ -45,7 +45,16 @@ func (s *SmartContract) InvokeForex(ctx contractapi.TransactionContextInterface,
 
 func (s *SmartContract) Recieve(ctx contractapi.TransactionContextInterface, bankAccount string, amount int) error {
     
-    return nil
+    fcn := "AddFunds"
+
+    args := [][]byte{[]byte(fcn), []byte(bankAccount), []byte(fmt.Sprintf("%d", amount))}
+
+    response := ctx.GetStub().InvokeChaincode("bank", args, "")
+
+    if response.GetStatus() != 200 {
+        return fmt.Errorf("bank chaincode returned %d", response.GetStatus())
+    }
+    
 }
 
 func (s *SmartContract) PayCentralBnk(ctx contractapi.TransactionContextInterface, currencyFrom string, currencyTo string, amount int, bankAccount string) error {
