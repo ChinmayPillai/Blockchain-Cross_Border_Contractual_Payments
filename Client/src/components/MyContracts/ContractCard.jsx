@@ -12,7 +12,6 @@ export default function ContractCard({ contract }) {
         axios.post(payUrl, {
             currencyFrom: contract.rateCurrency,
             currencyTo: contract.paymentCurrency,
-            amount: 50,
             bankFrom: managerBank,
             bankAccountFrom: managerBankAccountNo, 
             bankTo: contractorBank, 
