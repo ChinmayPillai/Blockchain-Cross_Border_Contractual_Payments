@@ -10,6 +10,7 @@ export default function NewContract() {
     const [interval, setInterval] = useState('');
     const [ratePerInterval, setRatePerInterval] = useState('');
     const [natureOfWork, setNatureOfWork] = useState('');
+    const [startDate, setStartDate] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,6 +23,7 @@ export default function NewContract() {
                 interval,
                 ratePerInterval,
                 natureOfWork,
+                startDate
             }).then(response => {
                 console.log(response.data.message);
                 alert('Contract created');
@@ -53,6 +55,7 @@ export default function NewContract() {
                     placeholder="manager"
                     fullWidth
                     margin="normal"
+                    required
                 />
                 <TextField
                     label="Contractor Username"
@@ -61,6 +64,7 @@ export default function NewContract() {
                     placeholder="contractor"
                     fullWidth
                     margin="normal"
+                    required
                 />
                 <TextField
                     label="Duration in Days"
@@ -69,6 +73,7 @@ export default function NewContract() {
                     placeholder="30"
                     fullWidth
                     margin="normal"
+                    required
                 />
                 <TextField
                     label="Interval in Days"
@@ -77,6 +82,16 @@ export default function NewContract() {
                     placeholder="7"
                     fullWidth
                     margin="normal"
+                    required
+                />
+                <TextField
+                    label="Start Date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    placeholder="DD-MM-YYYY"
+                    fullWidth
+                    margin="normal"
+                    required
                 />
                 <TextField
                     label="Rate per Interval"
@@ -85,6 +100,7 @@ export default function NewContract() {
                     placeholder="200"
                     fullWidth
                     margin="normal"
+                    required
                 />
                 <TextField
                     label="Nature of Work"
@@ -93,6 +109,7 @@ export default function NewContract() {
                     placeholder="SDE"
                     fullWidth
                     margin="normal"
+                    required
                 />
                 
                 <Button type="submit" variant="contained" color='success' style={{ display: 'block', margin: '0 auto' }}>Create Contract Asset</Button>
