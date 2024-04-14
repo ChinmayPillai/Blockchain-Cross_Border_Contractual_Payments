@@ -223,10 +223,10 @@ async function main(): Promise<void> {
         });
 
         app.post('/createContractAsset', async (req:any, res:any) => {
-            const { manager, contractor, duration, interval, ratePerInterval, natureOfWork } = req.body;
+            const { manager, contractor, duration, interval, ratePerInterval, natureOfWork, startDate } = req.body;
             try {
                 // Call the CreateContractAsset function on the smart contract.
-                await createContractAsset(contract, manager, contractor, duration, interval, ratePerInterval, natureOfWork);
+                await createContractAsset(contract, manager, contractor, duration, interval, ratePerInterval, natureOfWork, startDate);
                 res.status(200).json({ message: 'Contract asset created successfully' });
             } catch (error) {
                 console.error('Error creating contract asset:', error);
@@ -457,7 +457,7 @@ async function getPendingContracts(contract: Contract, username: string): Promis
     return result;
 }
 
-async function createContractAsset(contract: Contract, manager: string, contractor: string, duration: string, interval: string, ratePerInterval: string, natureOfWork: string): Promise<void> {
+async function createContractAsset(contract: Contract, manager: string, contractor: string, duration: string, interval: string, ratePerInterval: string, natureOfWork: string, startDate: string): Promise<void> {
     console.log('\n--> Submit Transaction: CreateContractAsset, function creates a new contract asset on the ledger');
     await contract.submitTransaction(
         'CreateContractAsset',
@@ -466,7 +466,8 @@ async function createContractAsset(contract: Contract, manager: string, contract
         duration,
         interval,
         ratePerInterval,
-        natureOfWork
+        natureOfWork,
+        startDate
     );
 }
 
