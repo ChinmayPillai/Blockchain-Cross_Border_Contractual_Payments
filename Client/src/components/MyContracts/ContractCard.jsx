@@ -1,8 +1,31 @@
 import { Typography, Button, Grid } from "@mui/material";
+import { useState } from "react";
+import axios from "axios";
+import { payUrl } from "../../Util/apiUrls";
 
 export default function ContractCard({ contract }) {
+
+    const [redeem, setRedeem] = useState(false);
+    const [currentDate, setCurrentDate] = useState('');
+
     function handleRedeem() {
-        console.log("Redeemed");
+        axios.post(payUrl, {
+            currencyFrom: contract.rateCurrency,
+            currencyTo: contract.paymentCurrency,
+            amount: 50,
+            bankFrom: managerBank,
+            bankAccountFrom: managerBankAccountNo, 
+            bankTo: contractorBank, 
+            bankAccountTo: contractorAccount
+        }).then(response => {
+            console.log(response.data.message);
+            alert('Payment Redeemed');
+            location.href = '/';
+        })
+        .catch(error => {
+            console.error('Error redeeming payment:', error);
+            alert('Error');
+        });
     }
 
     function handleReject() {
@@ -34,7 +57,7 @@ export default function ContractCard({ contract }) {
                     </Typography>
                 </Grid>
                 <Grid item md={4} lg={4} xl={4} textAlign="end">
-                    <Button variant="contained" color="success" onClick={handleRedeem}>
+                    <Button variant="contained" color="success" onClick={() => setRedeem(true)}>
                         Redeem Payment
                     </Button>
                     <Button variant="contained" color="error" onClick={handleReject} style={{ marginLeft: '8px' }}>
@@ -42,6 +65,21 @@ export default function ContractCard({ contract }) {
                     </Button>
                 </Grid>
             </Grid>
+
+            {redeem && (
+                <form onSubmit={handleRedeem} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <TextField
+                        label="Current Date"
+                        value={currentDate}
+                        onChange={(e) => setCurrentDate(e.target.value)}
+                        required
+                        style={{ marginTop: '30px' }}
+                    />
+                    <Button type="submit" variant="contained" color="success">
+                        Redeem Payment
+                    </Button>
+                </form>
+            )}
 
             <hr className="my-4" />
         </>
