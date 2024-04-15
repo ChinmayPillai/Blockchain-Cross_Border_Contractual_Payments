@@ -19,6 +19,7 @@ export default function ContractCard({ contract }) {
             currentDate: currentDate,
             contractor: contract.contractor,
             manager: contract.manager,
+            contractId: contract.contractId,
         }).then(response => {
             console.log(response.data.message);
             alert('Payment Redeemed');

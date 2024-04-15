@@ -320,10 +320,10 @@ async function main(): Promise<void> {
         
 
         app.post('/pay', async (req:any, res:any) => {
-            const { currencyFrom, currencyTo, bankFrom, bankAccountFrom, bankTo, bankAccountTo, currentDate } = req.body;
+            const { currencyFrom, currencyTo, bankFrom, bankAccountFrom, bankTo, bankAccountTo, currentDate, contractor, manager, contractId } = req.body;
             try {
                 // Call the pay function on the smart contract.
-                const amount = 10;
+                const amount = await calculateRedemptionAmount(contract, contractId, manager, contractor, currentDate);
                 await pay(contractMap.get(bankFrom), currencyFrom, currencyTo, amount, bankAccountFrom, bankTo, bankAccountTo);
                 res.status(200).json({ message: 'Payment successful' });
             } catch (error) {
