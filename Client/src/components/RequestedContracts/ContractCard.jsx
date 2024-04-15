@@ -17,8 +17,8 @@ export default function ContractCard({ contract }) {
             contractorAccount: contractorAccount,
             paymentCurrency: paymentCurrency
         })
-        .then(response => {
-            alert('Accepted')
+        .then((response) => {
+            alert('Accepted');
             window.location.reload();
         })
         .catch(error => {
@@ -85,7 +85,7 @@ export default function ContractCard({ contract }) {
                         value={contractorAccount}
                         onChange={(e) => setContractorAccount(e.target.value)}
                         required
-                        style={{ marginTop: '30px' }}
+                        sx={{ width: '20%', marginTop: '30px' }}
                     />
                     <br />
                     <TextField
@@ -94,6 +94,7 @@ export default function ContractCard({ contract }) {
                         value={paymentCurrency}
                         onChange={(e) => setPaymentCurrency(e.target.value)}
                         required
+                        sx={{ width: '20%' }}
                     >
                         <MenuItem value="USD">USD</MenuItem>
                         <MenuItem value="INR">INR</MenuItem>
