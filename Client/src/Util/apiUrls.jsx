@@ -9,6 +9,3 @@ export const acceptByManagerURL = 'http://localhost:3000/acceptByManager';
 export const dashboardUrlBase = 'http://localhost:3000/userAsset/';
 export const bankAccountUrlBase = 'http://localhost:3000/bankAccountAsset/';
 export const payUrl = 'http://localhost:3000/pay';
-export const removeFromRequestedOfContractorURL = 'http://localhost:3000/removeFromRequestedOfContractor';
-export const removeFromPendingOfManagerURL = 'http://localhost:3000/removeFromPendingOfManager';
-export const revokeURL = 'http://localhost:3000/revoke';

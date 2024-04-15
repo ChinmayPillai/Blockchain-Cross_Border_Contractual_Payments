@@ -24,7 +24,7 @@ export default function ContractCard({ contract }) {
 
     function handleReject() {
         // console.log("Rejected");
-        axios.put(removeFromPendingOfManagerURL, {
+        axios.put('http://localhost:3000/removeFromPendingOfManager', {
             contractId: contract.contractId,
             manager: contract.manager
         })

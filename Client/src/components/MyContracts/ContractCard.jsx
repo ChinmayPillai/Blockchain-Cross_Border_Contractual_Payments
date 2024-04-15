@@ -31,8 +31,8 @@ export default function ContractCard({ contract }) {
     }
 
     function handleReject() {
-        // console.log("Rejected");
-        axios.put(revokeURL, {
+        console.log("Rejected");
+        axios.put('http://localhost:3000/revoke', {
             contractId: contract.contractId,
             manager: contract.manager,
             contractor: contract.contractor
@@ -68,7 +68,7 @@ export default function ContractCard({ contract }) {
                     </Typography>
                 </Grid>
                 <Grid item md={2} lg={2} xl={2} textAlign="end">
-                    <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
+                    <Typography variant="http://localhost:5173/contractssubtitle1" color="textPrimary" fontFamily="Arial">
                         <strong>{contract.ratePerInterval} {contract.rateCurrency} / {contract.interval} days</strong>
                     </Typography>
                 </Grid>

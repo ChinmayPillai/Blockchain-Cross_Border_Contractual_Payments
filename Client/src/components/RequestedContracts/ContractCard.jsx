@@ -28,7 +28,7 @@ export default function ContractCard({ contract }) {
 
     function handleReject() {
         // console.log("Rejected");
-        axios.post(removeFromRequestedOfContractorURL,{
+        axios.put('http://localhost:3000/removeFromRequestedOfContractor',{
             contractId: contract.contractId,
             contractor: contract.contractor
         })
