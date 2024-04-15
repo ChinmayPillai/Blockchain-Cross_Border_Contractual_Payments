@@ -1,5 +1,5 @@
 import { Typography, Button, Grid, TextField, MenuItem } from "@mui/material";
-import { acceptByContractorURL } from "../../Util/apiUrls";
+import { acceptByContractorURL, removeRequestedURL } from "../../Util/apiUrls";
 import axios from 'axios'
 import { useState } from "react";
 
@@ -28,7 +28,7 @@ export default function ContractCard({ contract }) {
 
     function handleReject() {
         // console.log("Rejected");
-        axios.put('http://localhost:3000/removeFromRequestedOfContractor',{
+        axios.put(removeRequestedURL,{
             contractId: contract.contractId,
             contractor: contract.contractor
         })

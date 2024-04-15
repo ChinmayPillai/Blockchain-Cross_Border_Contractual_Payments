@@ -1,6 +1,6 @@
 import { Typography, Button, Grid } from "@mui/material";
 import axios from 'axios'
-import { acceptByManagerURL } from "../../Util/apiUrls";
+import { acceptByManagerURL, removePendingURL } from "../../Util/apiUrls";
 
 export default function ContractCard({ contract }) {
     function handleAccept() {
@@ -24,7 +24,7 @@ export default function ContractCard({ contract }) {
 
     function handleReject() {
         // console.log("Rejected");
-        axios.put('http://localhost:3000/removeFromPendingOfManager', {
+        axios.put(removePendingURL, {
             contractId: contract.contractId,
             manager: contract.manager
         })
