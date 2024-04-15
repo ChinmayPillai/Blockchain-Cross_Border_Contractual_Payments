@@ -320,7 +320,7 @@ async function main(): Promise<void> {
         
 
         app.post('/pay', async (req:any, res:any) => {
-            const { currencyFrom, currencyTo, bankFrom, bankAccountFrom, bankTo, bankAccountTo, currentDate } = req.body;
+            const { currencyFrom, currencyTo, bankFrom, bankAccountFrom, bankTo, bankAccountTo, currentDate, contractor, manager } = req.body;
             try {
                 // Call the pay function on the smart contract.
                 const amount = 10;

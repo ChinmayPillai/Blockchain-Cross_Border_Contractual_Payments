@@ -16,7 +16,9 @@ export default function ContractCard({ contract }) {
             bankAccountFrom: managerBankAccountNo, 
             bankTo: contractorBank, 
             bankAccountTo: contractorAccount,
-            currentDate: currentDate
+            currentDate: currentDate,
+            contractor: contract.contractor,
+            manager: contract.manager,
         }).then(response => {
             console.log(response.data.message);
             alert('Payment Redeemed');
