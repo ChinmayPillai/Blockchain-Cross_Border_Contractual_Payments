@@ -320,7 +320,7 @@ async function main(): Promise<void> {
         
 
         app.post('/pay', async (req:any, res:any) => {
-            const { currencyFrom, currencyTo, bankFrom, bankAccountFrom, bankTo, bankAccountTo, currentDate, contractor, manager } = req.body;
+            const { currencyFrom, currencyTo, bankFrom, bankAccountFrom, bankTo, bankAccountTo, currentDate } = req.body;
             try {
                 // Call the pay function on the smart contract.
                 const amount = 10;
@@ -334,10 +334,10 @@ async function main(): Promise<void> {
 
         // Endpoint to calculate redemption amount
         app.get('/calculateRedemptionAmount', async (req:any, res:any) => {
-            const { contractId, username, currentDate } = req.body;
+            const { contractId, manager, contractor , currentDate } = req.body;
             try {
                 // Call the calculateRedemptionAmount function on the smart contract.
-                const amount = await calculateRedemptionAmount(contract, contractId, username, currentDate);
+                const amount = await calculateRedemptionAmount(contract, contractId, manager, contractor, currentDate);
                 res.status(200).json({ message: 'Redemption amount calculated successfully', amount });
             } catch (error) {
                 console.error('Error calculating redemption amount:', error);
@@ -568,17 +568,13 @@ async function pay(contract: Contract, currencyFrom: string, currencyTo: string,
     console.log('*** Transaction committed successfully');
 }
 
-async function calculateRedemptionAmount(contract: Contract, contractId: number, username: string, currentDate: string): Promise<number> {
-    console.log(`\n--> Submit Transaction: CalculateRedemptionAmount, function calculates the amount to be redeemed`);
-    const resultBuffer = await contract.evaluateTransaction(
-        'CalculateRedemptionAmount',
-        contractId.toString(),
-        username,
-        currentDate
-    );
-    const amount = parseInt(resultBuffer.toString());
-    console.log('*** Transaction evaluated successfully');
-    return amount;
+async function calculateRedemptionAmount(contract : Contract, contractId:number, manager:string, contractor:string, currentDate:string): Promise<number> {
+    console.log('\n--> Evaluate Transaction: CalculateRedemptionAmount, function calculates the redemption amount for a given contract');
+    const resultBytes = await contract.evaluateTransaction('CalculateRedemptionAmount', contractId.toString(), manager, contractor, currentDate);
+    const resultJson = utf8Decoder.decode(resultBytes);
+    const result = JSON.parse(resultJson);
+    console.log('*** Transaction evaluated successfully:', result);
+    return result;
 }
 
 /**
