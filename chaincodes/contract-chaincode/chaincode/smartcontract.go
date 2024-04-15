@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 	"golang.org/x/crypto/bcrypt"
@@ -524,4 +525,82 @@ func (s *SmartContract) Revoke(ctx contractapi.TransactionContextInterface, cont
 	}
 
 	return nil
+}
+
+// CalculateRedemptionAmount calculates the amount to be redeemed and updates the last payment date
+func (s *SmartContract) CalculateRedemptionAmount(ctx contractapi.TransactionContextInterface, contractId int, username string, currentDate string) (int, error) {
+	// Get the user's asset
+	userAsset, err := s.GetUserAsset(ctx, username)
+	if err != nil {
+		return 0, err
+	}
+
+	// Find the contract in the Contracts or Pending array of the user
+	var contractIndex int
+	var found bool
+	var contracts []ContractAsset
+	for _, contract := range userAsset.Contracts {
+		if contract.ContractId == contractId {
+			contracts = userAsset.Contracts
+			found = true
+			break
+		}
+	}
+	if !found {
+		for _, contract := range userAsset.Pending {
+			if contract.ContractId == contractId {
+				contracts = userAsset.Pending
+				found = true
+				break
+			}
+		}
+	}
+	if !found {
+		return 0, fmt.Errorf("contract not found in the user's contracts or pending")
+	}
+
+	// Find the contract in the user's contracts
+	for i, contract := range contracts {
+		if contract.ContractId == contractId {
+			contractIndex = i
+			break
+		}
+	}
+
+	// Calculate the amount to be redeemed
+	lastPaymentDate := contracts[contractIndex].LastPaymentDate
+	interval := contracts[contractIndex].Interval
+	ratePerInterval := contracts[contractIndex].RatePerInterval
+
+	// Parse last payment date
+	lastPaymentDateParsed, err := time.Parse("02-01-2006", lastPaymentDate)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse last payment date: %v", err)
+	}
+
+	// Parse current date
+	currentDateParsed, err := time.Parse("02-01-2006", currentDate)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse current date: %v", err)
+	}
+
+	// Calculate days since last payment
+	daysSinceLastPayment := currentDateParsed.Sub(lastPaymentDateParsed).Hours() / 24
+
+	// Calculate amount
+	amount := int(daysSinceLastPayment/float64(interval)) * ratePerInterval
+
+	// Update the last payment date
+	contracts[contractIndex].LastPaymentDate = currentDate
+
+	// Update the user's asset in the world state
+	userAssetJSON, err := json.Marshal(userAsset)
+	if err != nil {
+		return 0, err
+	}
+	if err := ctx.GetStub().PutState(username, userAssetJSON); err != nil {
+		return 0, err
+	}
+
+	return amount, nil
 }

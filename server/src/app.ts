@@ -331,6 +331,19 @@ async function main(): Promise<void> {
                 res.status(500).json({ error: 'Failed to make payment' });
             }
         });
+
+        // Endpoint to calculate redemption amount
+        app.get('/calculateRedemptionAmount', async (req:any, res:any) => {
+            const { contractId, username, currentDate } = req.body;
+            try {
+                // Call the calculateRedemptionAmount function on the smart contract.
+                const amount = await calculateRedemptionAmount(contract, contractId, username, currentDate);
+                res.status(200).json({ message: 'Redemption amount calculated successfully', amount });
+            } catch (error) {
+                console.error('Error calculating redemption amount:', error);
+                res.status(500).json({ error: 'Failed to calculate redemption amount' });
+            }
+        });
         
 
     }
@@ -555,7 +568,18 @@ async function pay(contract: Contract, currencyFrom: string, currencyTo: string,
     console.log('*** Transaction committed successfully');
 }
 
-
+async function calculateRedemptionAmount(contract: Contract, contractId: number, username: string, currentDate: string): Promise<number> {
+    console.log(`\n--> Submit Transaction: CalculateRedemptionAmount, function calculates the amount to be redeemed`);
+    const resultBuffer = await contract.evaluateTransaction(
+        'CalculateRedemptionAmount',
+        contractId.toString(),
+        username,
+        currentDate
+    );
+    const amount = parseInt(resultBuffer.toString());
+    console.log('*** Transaction evaluated successfully');
+    return amount;
+}
 
 /**
  * envOrDefault() will return the value of an environment variable, or a default value if the variable is undefined.
