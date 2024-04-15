@@ -55,12 +55,15 @@ export default function ContractCard({ contract }) {
                         <strong><em>{contract.duration} days</em></strong>
                     </Typography>
                     <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
-                        {contract.natureOfWork}
+                        From: {contract.startDate}
                     </Typography>
                 </Grid>
                 <Grid item md={2} lg={2} xl={2} textAlign="end">
                     <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
                         <strong>{contract.ratePerInterval} {contract.rateCurrency} / {contract.interval} days</strong>
+                    </Typography>
+                    <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
+                        {contract.natureOfWork}
                     </Typography>
                 </Grid>
                 <Grid item md={4} lg={4} xl={4} textAlign="end">
