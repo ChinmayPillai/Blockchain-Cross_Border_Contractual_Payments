@@ -23,7 +23,20 @@ export default function ContractCard({ contract }) {
     }
 
     function handleReject() {
-        console.log("Rejected");
+        // console.log("Rejected");
+        axios.put(removeFromPendingOfManagerURL, {
+            contractId: contract.contractId,
+            manager: contract.manager
+        })
+            .then(response => {
+                //console.log(response.data.message);
+                alert('Contract Removed from Pending List')
+                window.location.reload();
+            })
+            .catch(error => {
+                //console.error('Failed to reject contract by manager:', error);
+                alert('Error')
+            });
     }
 
     return (

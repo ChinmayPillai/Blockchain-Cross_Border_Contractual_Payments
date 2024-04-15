@@ -27,7 +27,18 @@ export default function ContractCard({ contract }) {
     }
 
     function handleReject() {
-        console.log("Rejected");
+        // console.log("Rejected");
+        axios.post(removeFromRequestedOfContractorURL,{
+            contractId: contract.contractId,
+            contractor: contract.contractor
+        })
+        .then(response => {
+            alert('Contract Removed from Requested List')
+            window.location.reload();
+        })
+        .catch(error => {
+            alert('Error')
+        });
     }
 
     return (

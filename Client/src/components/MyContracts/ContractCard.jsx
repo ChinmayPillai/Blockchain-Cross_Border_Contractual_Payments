@@ -31,7 +31,21 @@ export default function ContractCard({ contract }) {
     }
 
     function handleReject() {
-        console.log("Rejected");
+        // console.log("Rejected");
+        axios.put(revokeURL, {
+            contractId: contract.contractId,
+            manager: contract.manager,
+            contractor: contract.contractor
+        })
+        .then(response => {
+            console.log(response.data.message);
+            alert('Contract Revoked');
+            location.href = '/';
+        })
+        .catch(error => {
+            console.error('Error revoking contract:', error);
+            alert('Error');
+        });
     }
 
     return (
