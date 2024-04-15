@@ -142,7 +142,7 @@ func (s *SmartContract) ForeignTransfer(ctx contractapi.TransactionContextInterf
 	fcn := "PayCentralBnk"
 	args := [][]byte{[]byte(fcn), []byte(currencyFrom), []byte(currencyTo), []byte(fmt.Sprintf("%d", amount)), []byte(bank), []byte(bankAccount)}
 
-	centralBnk := strings.ToLower(currencyTo)
+	centralBnk := strings.ToLower(currencyFrom)
 
 	response := ctx.GetStub().InvokeChaincode(centralBnk, args, "")
 
