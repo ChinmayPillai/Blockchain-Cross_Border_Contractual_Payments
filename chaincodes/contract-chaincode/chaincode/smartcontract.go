@@ -535,42 +535,29 @@ func (s *SmartContract) CalculateRedemptionAmount(ctx contractapi.TransactionCon
 		return 0, err
 	}
 
-	// Find the contract in the Contracts or Pending array of the user
-	var contractIndex int
-	var found bool
-	var contracts []ContractAsset
-	for _, contract := range userAsset.Contracts {
-		if contract.ContractId == contractId {
-			contracts = userAsset.Contracts
-			found = true
-			break
-		}
-	}
-	if !found {
-		for _, contract := range userAsset.Pending {
-			if contract.ContractId == contractId {
-				contracts = userAsset.Pending
-				found = true
-				break
-			}
-		}
-	}
-	if !found {
-		return 0, fmt.Errorf("contract not found in the user's contracts or pending")
-	}
-
 	// Find the contract in the user's contracts
-	for i, contract := range contracts {
+	var contractIndex int
+	var contractFound bool
+	for i, contract := range userAsset.Contracts {
 		if contract.ContractId == contractId {
 			contractIndex = i
+			contractFound = true
 			break
 		}
 	}
 
+	if !contractFound {
+		return 0, fmt.Errorf("contract not found in the user's contracts")
+	}
+
+	// Get the contractor's username and manager's username
+	contractorUsername := userAsset.Contracts[contractIndex].Contractor
+	managerUsername := userAsset.Contracts[contractIndex].Manager
+
 	// Calculate the amount to be redeemed
-	lastPaymentDate := contracts[contractIndex].LastPaymentDate
-	interval := contracts[contractIndex].Interval
-	ratePerInterval := contracts[contractIndex].RatePerInterval
+	lastPaymentDate := userAsset.Contracts[contractIndex].LastPaymentDate
+	interval := userAsset.Contracts[contractIndex].Interval
+	ratePerInterval := userAsset.Contracts[contractIndex].RatePerInterval
 
 	// Parse last payment date
 	lastPaymentDateParsed, err := time.Parse("02-01-2006", lastPaymentDate)
@@ -591,14 +578,58 @@ func (s *SmartContract) CalculateRedemptionAmount(ctx contractapi.TransactionCon
 	amount := int(daysSinceLastPayment/float64(interval)) * ratePerInterval
 
 	// Update the last payment date
-	contracts[contractIndex].LastPaymentDate = currentDate
+	// contracts[contractIndex].LastPaymentDate = currentDate
 
-	// Update the user's asset in the world state
-	userAssetJSON, err := json.Marshal(userAsset)
+	// Calculate the accurate last payment date
+	lastPaymentDateAdjusted := currentDateParsed.Add(-time.Duration(int(daysSinceLastPayment)%interval) * 24 * time.Hour).Format("02-01-2006")
+
+	// Update the last payment date
+	// userAsset.Contracts[contractIndex].LastPaymentDate = lastPaymentDateAdjusted
+
+	// // Update the user's asset in the world state
+	// userAssetJSON, err := json.Marshal(userAsset)
+	// if err != nil {
+	// 	return 0, err
+	// }
+	// if err := ctx.GetStub().PutState(username, userAssetJSON); err != nil {
+	// 	return 0, err
+	// }
+
+	// Update last payment date for contractor
+	contractorAsset, err := s.GetUserAsset(ctx, contractorUsername)
 	if err != nil {
 		return 0, err
 	}
-	if err := ctx.GetStub().PutState(username, userAssetJSON); err != nil {
+	for i, contract := range contractorAsset.Contracts {
+		if contract.ContractId == contractId {
+			contractorAsset.Contracts[i].LastPaymentDate = lastPaymentDateAdjusted
+			break
+		}
+	}
+	contractorAssetJSON, err := json.Marshal(contractorAsset)
+	if err != nil {
+		return 0, err
+	}
+	if err := ctx.GetStub().PutState(contractorUsername, contractorAssetJSON); err != nil {
+		return 0, err
+	}
+
+	// Update last payment date for manager
+	managerAsset, err := s.GetUserAsset(ctx, managerUsername)
+	if err != nil {
+		return 0, err
+	}
+	for i, contract := range managerAsset.Contracts {
+		if contract.ContractId == contractId {
+			managerAsset.Contracts[i].LastPaymentDate = lastPaymentDateAdjusted
+			break
+		}
+	}
+	managerAssetJSON, err := json.Marshal(managerAsset)
+	if err != nil {
+		return 0, err
+	}
+	if err := ctx.GetStub().PutState(managerUsername, managerAssetJSON); err != nil {
 		return 0, err
 	}
 
