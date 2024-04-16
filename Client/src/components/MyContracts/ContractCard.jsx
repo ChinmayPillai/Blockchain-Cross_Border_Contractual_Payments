@@ -90,6 +90,7 @@ export default function ContractCard({ contract }) {
                 <form onSubmit={handleRedeem} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <TextField
                         label="Current Date"
+                        placeholder="DD-MM-YYYY"
                         value={currentDate}
                         onChange={(e) => setCurrentDate(e.target.value)}
                         required
