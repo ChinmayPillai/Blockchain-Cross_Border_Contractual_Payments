@@ -8,7 +8,10 @@ export default function ContractCard({ contract }) {
     const [redeem, setRedeem] = useState(false);
     const [currentDate, setCurrentDate] = useState('');
 
-    function handleRedeem() {
+    function handleRedeem(e) {
+
+        e.preventDefault();
+        
         axios.post(payUrl, {
             currencyFrom: contract.rateCurrency,
             currencyTo: contract.paymentCurrency,

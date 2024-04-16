@@ -9,7 +9,10 @@ export default function ContractCard({ contract }) {
     const [contractorAccount, setContractorAccount] = useState('');
     const [paymentCurrency, setPaymentCurrency] = useState('');
 
-    function handleAccept() {
+    function handleAccept(e) {
+
+        e.preventDefault();
+
         axios.post(acceptByContractorURL, {
             contractId: contract.contractId,
             contractor: contract.contractor,
