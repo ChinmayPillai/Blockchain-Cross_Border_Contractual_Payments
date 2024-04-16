@@ -19,7 +19,7 @@ export default function ContractCard({ contract }) {
             bankAccountFrom: contract.managerBankAccountNo, 
             bankTo: contract.contractorBank, 
             bankAccountTo: contract.contractorAccount,
-            currentDate: contract.currentDate,
+            currentDate: currentDate,
             contractor: contract.contractor,
             manager: contract.manager,
             contractId: contract.contractId,
