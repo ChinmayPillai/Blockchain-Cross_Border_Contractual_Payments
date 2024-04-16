@@ -11,11 +11,11 @@ export default function ContractCard({ contract }) {
     function handleRedeem(e) {
 
         e.preventDefault();
-        
+
         axios.post(payUrl, {
             currencyFrom: contract.rateCurrency,
             currencyTo: contract.paymentCurrency,
-            bankFrom: managerBank,
+            bankFrom: contract.managerBank,
             bankAccountFrom: managerBankAccountNo, 
             bankTo: contractorBank, 
             bankAccountTo: contractorAccount,
