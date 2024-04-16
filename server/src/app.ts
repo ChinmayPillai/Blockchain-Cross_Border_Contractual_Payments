@@ -173,9 +173,9 @@ async function main(): Promise<void> {
             }
         });
 
-        app.get('/bankAccountAsset/:accountNo', async (req:any, res:any) => {
-            const { accountNo } = req.params;
-            const { bank } = req.body;
+        app.get('/bankAccountAsset/:bank/:accountNo', async (req:any, res:any) => {
+            const { accountNo, bank } = req.params;
+            console.log(accountNo, bank)
             try {
                 // Call the GetBankAccountAsset function on the smart contract.
                 const result = await getBankAccountAsset(contractMap.get(bank) , accountNo);

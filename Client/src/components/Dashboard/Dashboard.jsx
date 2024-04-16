@@ -19,13 +19,12 @@ export default function Dashboard() {
         axios.get(userAsseturl)
         .then((response) => {
             setUserAsset(response.data)
-            axios.get(bankAccountUrlBase + response.data.bankAccountNo, {
-                bank: response.data.bank
-            })
-            .then((response) => {
-                setFunds(response.data.balance)
+            axios.get(bankAccountUrlBase + response.data.bank + "/" + response.data.bankAccountNo)
+            .then(response2 => {
+                setFunds(response2.data.funds)
             })
             .catch((error) => console.error(error));
+            console.log(response.data.bank)
         })
         .catch((error) => console.error(error));
 
@@ -52,6 +51,8 @@ export default function Dashboard() {
                     </Typography>
                     <Typography variant="h4" style={{ marginBottom: "1rem" }}>
                         Bank Account No: <strong>{userAsset.bankAccountNo}</strong>
+                    </Typography><Typography variant="h4" style={{ marginBottom: "1rem" }}>
+                        Bank: <strong>{userAsset.bank}</strong>
                     </Typography>
                     <Typography variant="h4" style={{ marginBottom: "1rem" }}>
                         Central Bank: <strong>{userAsset.centralBankID}</strong>
