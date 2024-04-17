@@ -74,7 +74,11 @@ function Login() {
         console.log(response.data);
         alert(`Registration Successful`);
         location.href = "/login";
-      });
+      })
+      .catch((error) => {
+        console.log(error);
+        alert('Error');
+      })
   }
 
   return (
