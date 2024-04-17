@@ -44,7 +44,7 @@ func (s *SmartContract) InvokeForex(ctx contractapi.TransactionContextInterface,
     return payload, nil
 }
 
-func (s *SmartContract) Recieve(ctx contractapi.TransactionContextInterface, bank string, bankAccount string, amount int) error {
+func (s *SmartContract) Receive(ctx contractapi.TransactionContextInterface, bank string, bankAccount string, amount int) error {
     
     fcn := "AddFunds"
     bankName := strings.ToLower(bank)
