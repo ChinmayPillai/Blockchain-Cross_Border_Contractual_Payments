@@ -80,9 +80,11 @@ export default function ContractCard({ contract }) {
                     </Typography>
                 </Grid>
                 <Grid item md={4} lg={4} xl={4} textAlign="end">
-                    <Button variant="contained" color="success" onClick={() => setRedeem(true)}>
-                        Redeem Payment
-                    </Button>
+                    {localStorage.getItem("username")!=contract.manager && (
+                        <Button variant="contained" color="success" onClick={() => setRedeem(true)}>
+                            Redeem Payment
+                        </Button>
+                    )}
                     <Button variant="contained" color="error" onClick={handleReject} style={{ marginLeft: '8px' }}>
                         Revoke Contract
                     </Button>
