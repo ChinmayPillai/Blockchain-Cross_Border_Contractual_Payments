@@ -8,6 +8,7 @@ export default function ContractCard({ contract }) {
     const [accepted, setAccepted] = useState(false);
     const [contractorAccount, setContractorAccount] = useState('');
     const [paymentCurrency, setPaymentCurrency] = useState('');
+    const [tax, setTax] = useState('');
 
     function handleAccept(e) {
 
@@ -17,8 +18,9 @@ export default function ContractCard({ contract }) {
             contractId: contract.contractId,
             contractor: contract.contractor,
             manager: contract.manager,
-            contractorAccount: contractorAccount,
-            paymentCurrency: paymentCurrency
+            tax: tax
+            // contractorAccount: contractorAccount,
+            // paymentCurrency: paymentCurrency
         })
         .then((response) => {
             alert('Accepted');
@@ -84,14 +86,23 @@ export default function ContractCard({ contract }) {
             {accepted && (
                 <form onSubmit={handleAccept} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <TextField
+                        label="Tax"
+                        value={tax}
+                        onChange={(e) => setTax(e.target.value)}
+                        placeholder="20%"
+                        required
+                        sx={{ width: '20%', marginTop: '30px' }}
+                    />
+                    <br />
+                    {/* <TextField
                         label="Contractor Account"
                         value={contractorAccount}
                         onChange={(e) => setContractorAccount(e.target.value)}
                         required
                         sx={{ width: '20%', marginTop: '30px' }}
                     />
-                    <br />
-                    <TextField
+                    <br /> */}
+                    {/* <TextField
                         select
                         label="Payment Currency"
                         value={paymentCurrency}
@@ -102,7 +113,7 @@ export default function ContractCard({ contract }) {
                         <MenuItem value="USD">USD</MenuItem>
                         <MenuItem value="INR">INR</MenuItem>
                     </TextField>
-                    <br />
+                    <br /> */}
                     <Button type="submit" variant="contained" color="success">
                         Confirm Accept
                     </Button>

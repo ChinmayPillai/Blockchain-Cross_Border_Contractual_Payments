@@ -104,9 +104,9 @@ async function main(): Promise<void> {
         await initLedger(inrContract);
 
         app.post('/acceptByContractor', async (req:any, res:any) => {
-            const { contractId, contractor, manager, contractorAccount, paymentCurrency } = req.body;
+            const { contractId, contractor, manager } = req.body;
             try {
-                await acceptByContractor(contract, contractId, contractor, manager, contractorAccount, paymentCurrency);
+                await acceptByContractor(contract, contractId, contractor, manager);
                 res.status(200).json({ message: 'Contract accepted by contractor' });
             } catch (error) {
                 console.error('Error accepting contract by contractor:', error);
@@ -482,15 +482,13 @@ async function createContractAsset(contract: Contract, manager: string, contract
     );
 }
 
-async function acceptByContractor(contract: Contract, contractId: number, contractor: string, manager: string, contractorAccount: string, paymentCurrency: string): Promise<void> {
+async function acceptByContractor(contract: Contract, contractId: number, contractor: string, manager: string): Promise<void> {
     console.log('\n--> Submit Transaction: AcceptByContractor, function accepts the contract by the contractor');
     await contract.submitTransaction(
         'AcceptByContractor',
         contractId.toString(),
         contractor,
-        manager,
-        contractorAccount,
-        paymentCurrency
+        manager
     );
     console.log('*** Transaction committed successfully');
 }

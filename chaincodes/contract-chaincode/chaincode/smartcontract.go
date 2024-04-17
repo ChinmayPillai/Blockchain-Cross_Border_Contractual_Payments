@@ -232,7 +232,7 @@ func (s *SmartContract) CreateContractAsset(ctx contractapi.TransactionContextIn
 // AcceptByContractor fills ContractorAccount and PaymentCurrency in the previous contract,
 // removes it from the Requests array of contractor,
 // and appends it to the Pending array of manager
-func (s *SmartContract) AcceptByContractor(ctx contractapi.TransactionContextInterface, contractId int, contractor string, manager string, contractorAccount string, paymentCurrency string) error {
+func (s *SmartContract) AcceptByContractor(ctx contractapi.TransactionContextInterface, contractId int, contractor string, manager string) error {
 	// Get contractor's user asset
 	contractorAsset, err := s.GetUserAsset(ctx, contractor)
 	if err != nil {
@@ -255,8 +255,8 @@ func (s *SmartContract) AcceptByContractor(ctx contractapi.TransactionContextInt
 
 	// Fill ContractorAccount and PaymentCurrency in the previous contract
 	contract := contractorAsset.Requests[contractIndex]
-	contract.ContractorAccount = contractorAccount
-	contract.PaymentCurrency = paymentCurrency
+	contract.ContractorAccount = contractorAsset.BankAccountNo
+	contract.PaymentCurrency = contractorAsset.CentralBankID
 	contract.ContractorBank = contractorAsset.Bank
 
 	// Remove the contract from the Requests array of contractor
