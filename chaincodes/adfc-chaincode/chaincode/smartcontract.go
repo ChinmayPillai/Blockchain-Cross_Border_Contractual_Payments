@@ -147,7 +147,7 @@ func (s *SmartContract) ForeignTransfer(ctx contractapi.TransactionContextInterf
 	response := ctx.GetStub().InvokeChaincode(centralBnk, args, "")
 
 	if response.GetStatus() != 200 {
-		return fmt.Errorf("adfc to central bank chaincode invoke returned %d", response.GetStatus())
+		return fmt.Errorf("adfc to central bank chaincode invoke returned %d. %s", response.GetStatus(), response.GetMessage())
 	}
 
 	return nil	
@@ -178,7 +178,7 @@ func (s *SmartContract) Pay(ctx contractapi.TransactionContextInterface, currenc
 		response := ctx.GetStub().InvokeChaincode(contract, args, "")
 
 		if response.GetStatus() != 200 {
-			return fmt.Errorf("adfc chaincode add funds invoke returned %d", response.GetStatus())
+			return fmt.Errorf("adfc chaincode add funds invoke returned %d. %s", response.GetStatus(), response.GetMessage())
 		}
 
 		return nil

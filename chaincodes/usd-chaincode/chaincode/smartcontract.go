@@ -33,7 +33,7 @@ func (s *SmartContract) InvokeForex(ctx contractapi.TransactionContextInterface,
     response := ctx.GetStub().InvokeChaincode("forex", args, "")
 
     if response.GetStatus() != 200 {
-        return 0, fmt.Errorf("forex chaincode returned %d", response.GetStatus())
+        return 0, fmt.Errorf("forex chaincode returned %d. %s", response.GetStatus(), response.GetMessage())
     }
 
     payload, err := strconv.Atoi(string(response.GetPayload()))
@@ -54,7 +54,7 @@ func (s *SmartContract) Recieve(ctx contractapi.TransactionContextInterface, ban
     response := ctx.GetStub().InvokeChaincode(bankName, args, "")
 
     if response.GetStatus() != 200 {
-        return fmt.Errorf("usd cbnk chaincode receive to add funds invoke returned %d", response.GetStatus())
+        return fmt.Errorf("usd cbnk chaincode receive to add funds invoke returned %d. %s", response.GetStatus(), response.GetMessage())
     }
 
     return nil
@@ -75,7 +75,7 @@ func (s *SmartContract) PayCentralBnk(ctx contractapi.TransactionContextInterfac
     response := ctx.GetStub().InvokeChaincode(centralBnk, args, "")
 
     if response.GetStatus() != 200 {
-        return fmt.Errorf("cbnk chaincode to recieve invoke returned %d", response.GetStatus())
+        return fmt.Errorf("cbnk chaincode to recieve invoke returned %d. %s", response.GetStatus(), response.GetMessage())
     }
 
     return nil
