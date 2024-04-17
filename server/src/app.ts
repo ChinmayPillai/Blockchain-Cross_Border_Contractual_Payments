@@ -129,12 +129,9 @@ async function main(): Promise<void> {
         app.post('/register', async (req:any, res:any) => {
             const { username, name, password, bank, bankAccount, centralBank, company } = req.body;
             try {
-                // Hash the password
-                const salt = await bcrypt.genSalt(10);
-                const hashedPassword = await bcrypt.hash(password, salt);
 
                 // Call the CreateUserAsset function on the smart contract.
-                await createUserAsset(contract, username, name, hashedPassword, bank, bankAccount, centralBank, company);
+                await createUserAsset(contract, username, name, password, bank, bankAccount, centralBank, company);
                 await createBankAccountAsset(contractMap.get(bank), bankAccount, centralBank, 10000, username);
                 res.status(200).json({ message: 'User asset created successfully' });
             } catch (error) {

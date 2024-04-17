@@ -13,6 +13,7 @@ import {
   MDBInput
 } from "mdb-react-ui-kit";
 import axios from "axios";
+import bcrypt from "bcryptjs";
 import { loginUrl, registerUrl } from "../../Util/apiUrls";
 
 function Login() {
@@ -53,14 +54,17 @@ function Login() {
       });
   }
 
-  function registerUser(event) {
+  async function registerUser(event) {
     event.preventDefault();
     console.log("Register\n");
+    // Hash the password
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs.hash(password, salt);
     axios
       .post(registerUrl, { 
         name: name,
         username: username,
-        password: password,
+        password: hashedPassword,
         bankAccount: bankAccount,
         bank: bank,
         centralBank: centralBank,
