@@ -21,10 +21,13 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 
 func (s *SmartContract) Forex(ctx contractapi.TransactionContextInterface, currencyFrom string, currencyTo string, amount int) (int, error) {
     
+    forexFees := 0.01 // 1%
+    feesMultiplier := 1.0 - forexFees
+
     if currencyFrom == "USD" && currencyTo == "INR" {
-        return amount * 83, nil
+        return int(float64(amount) * 83 * feesMultiplier), nil
     } else if currencyFrom == "INR" && currencyTo == "USD" {
-        return amount / 83, nil
+        return int(float64(amount)* feesMultiplier / 83), nil
     }
     
     return 0, fmt.Errorf("invalid currency pair")

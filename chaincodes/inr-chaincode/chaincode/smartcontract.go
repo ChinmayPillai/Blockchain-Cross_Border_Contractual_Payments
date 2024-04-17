@@ -68,9 +68,12 @@ func (s *SmartContract) PayCentralBnk(ctx contractapi.TransactionContextInterfac
         return err
     }
 
+    internationalTransferFees := 0.02 // 2%
+    feesMultiplier := 1.0 - internationalTransferFees
+
     fcn := "Receive"
     centralBnk := strings.ToLower(currencyTo)
-    args := [][]byte{[]byte(fcn), []byte(bank), []byte(bankAccount), []byte(fmt.Sprintf("%d", toSend))}
+    args := [][]byte{[]byte(fcn), []byte(bank), []byte(bankAccount), []byte(fmt.Sprintf("%d", int(feesMultiplier * float64(toSend))))}
 
     response := ctx.GetStub().InvokeChaincode(centralBnk, args, "")
 
