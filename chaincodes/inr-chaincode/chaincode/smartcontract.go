@@ -54,7 +54,7 @@ func (s *SmartContract) Recieve(ctx contractapi.TransactionContextInterface, ban
     response := ctx.GetStub().InvokeChaincode(bankName, args, "")
 
     if response.GetStatus() != 200 {
-        return fmt.Errorf("bank chaincode returned %d", response.GetStatus())
+        return fmt.Errorf("inr cbnk chaincode receive to add funds invoke returned %d", response.GetStatus())
     }
 
     return nil
@@ -75,7 +75,7 @@ func (s *SmartContract) PayCentralBnk(ctx contractapi.TransactionContextInterfac
     response := ctx.GetStub().InvokeChaincode(centralBnk, args, "")
 
     if response.GetStatus() != 200 {
-        return fmt.Errorf("central bank chaincode returned %d", response.GetStatus())
+        return fmt.Errorf("central bank chaincode to recieve invoke returned %d", response.GetStatus())
     }
 
     return nil
