@@ -321,7 +321,7 @@ async function main(): Promise<void> {
             try {
                 // Call the pay function on the smart contract.
                 const amount = await calculateRedemptionAmount(contract, contractId, manager, contractor, currentDate);
-                await pay(contractMap.get(bankFrom), currencyFrom, currencyTo, amount, bankAccountFrom, bankTo, bankAccountTo);
+                await pay(contractMap.get(bankFrom), currencyFrom, currencyTo, amount, bankAccountFrom, bankTo.toLowerCase(), bankAccountTo);
                 res.status(200).json({ message: 'Payment successful' });
             } catch (error) {
                 console.error('Error making payment:', error);
