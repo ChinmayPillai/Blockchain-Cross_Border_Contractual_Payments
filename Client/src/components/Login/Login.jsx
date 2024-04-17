@@ -58,8 +58,8 @@ function Login() {
     event.preventDefault();
     console.log("Register\n");
     // Hash the password
-    const salt = await bcryptjs.genSalt(10);
-    const hashedPassword = await bcryptjs.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     axios
       .post(registerUrl, { 
         name: name,
