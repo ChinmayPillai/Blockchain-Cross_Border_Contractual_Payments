@@ -593,8 +593,15 @@ func (s *SmartContract) CalculateRedemptionAmount(ctx contractapi.TransactionCon
 	amount := int(daysSinceLastPayment/interval) * int(ratePerInterval)
 
 	// Update the last payment date for both manager and contractor
+	// Calculate the number of completed intervals since the last payment
+	completedIntervals := int(daysSinceLastPayment / interval)
+
+	// Calculate the adjustment to the last payment date
+	adjustment := time.Duration(completedIntervals * int(interval))
+
+	// Update the last payment date for both manager and contractor
 	// Calculate the accurate last payment date
-	lastPaymentDateAdjusted := lastPaymentDateParsed.Add(-time.Duration(int(daysSinceLastPayment)%int(interval)) * 24 * time.Hour).Format("02-01-2006")
+	lastPaymentDateAdjusted := lastPaymentDateParsed.Add(adjustment * 24 * time.Hour).Format("02-01-2006")
 
 	// Update the last payment date for manager
 	managerContract.LastPaymentDate = lastPaymentDateAdjusted
