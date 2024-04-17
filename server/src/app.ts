@@ -247,8 +247,8 @@ async function main(): Promise<void> {
             }
         });
 
-        app.get('/invokeForex', async (req:any, res:any) => {
-            const { currencyFrom, currencyTo, amount } = req.body;
+        app.get('/invokeForex/:currencyFrom/:currencyTo/:amount', async (req:any, res:any) => {
+            const { currencyFrom, currencyTo, amount } = req.params;
             try {
                 // Call the InvokeForex function on the smart contract.
                 const result = await invokeForex(usdContract, currencyFrom, currencyTo, amount);
@@ -333,8 +333,8 @@ async function main(): Promise<void> {
         });
 
         // Endpoint to calculate redemption amount
-        app.get('/calculateRedemptionAmount', async (req:any, res:any) => {
-            const { contractId, manager, contractor , currentDate } = req.body;
+        app.get('/calculateRedemptionAmount/:contractId/:manager/:contractor/:currentDate', async (req:any, res:any) => {
+            const { contractId, manager, contractor , currentDate } = req.params;
             try {
                 // Call the calculateRedemptionAmount function on the smart contract.
                 const amount = await calculateRedemptionAmount(contract, contractId, manager, contractor, currentDate);
