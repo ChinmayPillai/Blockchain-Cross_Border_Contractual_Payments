@@ -8,7 +8,6 @@ export default function ContractCard({ contract }) {
     const [accepted, setAccepted] = useState(false);
     const [contractorAccount, setContractorAccount] = useState('');
     const [paymentCurrency, setPaymentCurrency] = useState('');
-    const [tax, setTax] = useState('');
 
     function handleAccept(e) {
 
@@ -18,7 +17,6 @@ export default function ContractCard({ contract }) {
             contractId: contract.contractId,
             contractor: contract.contractor,
             manager: contract.manager,
-            tax: tax
             // contractorAccount: contractorAccount,
             // paymentCurrency: paymentCurrency
         })
@@ -74,7 +72,7 @@ export default function ContractCard({ contract }) {
                     </Typography>
                 </Grid>
                 <Grid item md={4} lg={4} xl={4} textAlign="end">
-                    <Button variant="contained" color="success" onClick={() => setAccepted(true)}>
+                    <Button variant="contained" color="success" onClick={handleAccept}>
                         Accept
                     </Button>
                     <Button variant="contained" color="error" onClick={handleReject} style={{ marginLeft: '8px' }}>
@@ -83,26 +81,17 @@ export default function ContractCard({ contract }) {
                 </Grid>
             </Grid>
 
-            {accepted && (
+            {/* {accepted && (
                 <form onSubmit={handleAccept} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <TextField
-                        label="Tax"
-                        value={tax}
-                        onChange={(e) => setTax(e.target.value)}
-                        placeholder="20%"
-                        required
-                        sx={{ width: '20%', marginTop: '30px' }}
-                    />
-                    <br />
-                    {/* <TextField
                         label="Contractor Account"
                         value={contractorAccount}
                         onChange={(e) => setContractorAccount(e.target.value)}
                         required
                         sx={{ width: '20%', marginTop: '30px' }}
                     />
-                    <br /> */}
-                    {/* <TextField
+                    <br />
+                    <TextField
                         select
                         label="Payment Currency"
                         value={paymentCurrency}
@@ -113,12 +102,12 @@ export default function ContractCard({ contract }) {
                         <MenuItem value="USD">USD</MenuItem>
                         <MenuItem value="INR">INR</MenuItem>
                     </TextField>
-                    <br /> */}
+                    <br />
                     <Button type="submit" variant="contained" color="success">
                         Confirm Accept
                     </Button>
                 </form>
-            )}
+            )} */}
 
             <hr className="my-4" />
         </>
