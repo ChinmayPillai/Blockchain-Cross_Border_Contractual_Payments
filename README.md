@@ -22,6 +22,7 @@ sudo ./network.sh deployCC -ccn basic -ccp ../../chaincodes/contract-chaincode -
 sudo ./network.sh createChannel -c channel1
 sudo ./network.sh deployCC -ccn adfc -ccp ../../chaincodes/adfc-chaincode -c channel1 -ccl go
 sudo ./network.sh deployCC -ccn ibibi -ccp ../../chaincodes/ibibi-chaincode -c channel1 -ccl go
+sudo ./network.sh deployCC -ccn yesbi -ccp ../../chaincodes/yesbi-chaincode -c channel1 -ccl go
 sudo ./network.sh deployCC -ccn forex -ccp ../../chaincodes/forex-chaincode -c channel1 -ccl go
 sudo ./network.sh deployCC -ccn inr -ccp ../../chaincodes/inr-chaincode -c channel1 -ccl go
 sudo ./network.sh deployCC -ccn usd -ccp ../../chaincodes/usd-chaincode -c channel1 -ccl go

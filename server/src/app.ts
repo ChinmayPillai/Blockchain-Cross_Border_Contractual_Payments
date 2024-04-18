@@ -80,6 +80,7 @@ async function main(): Promise<void> {
         const contract = network.getContract(chaincodeName);
         const adfcContract = bankNetwork.getContract('adfc');
         const ibibiContract = bankNetwork.getContract('ibibi');
+        const yesbiContract = bankNetwork.getContract('yesbi');
         const forexContract = bankNetwork.getContract('forex');
         const usdContract = bankNetwork.getContract('usd');
         const inrContract = bankNetwork.getContract('inr');
@@ -88,10 +89,12 @@ async function main(): Promise<void> {
         const contractMap = new Map<string, any>();
         contractMap.set('adfc', adfcContract);
         contractMap.set('ibibi', ibibiContract);
+        contractMap.set('yesbi', yesbiContract);
         contractMap.set('usd', usdContract);
         contractMap.set('inr', inrContract);
         contractMap.set('ADFC', adfcContract);
         contractMap.set('IBIBI', ibibiContract);
+        contractMap.set('YESBI', yesbiContract);
         contractMap.set('USD', usdContract);
         contractMap.set('INR', inrContract);
 
@@ -99,6 +102,7 @@ async function main(): Promise<void> {
         await initLedger(contract);
         await initLedger(adfcContract);
         await initLedger(ibibiContract);
+        await initLedger(yesbiContract);
         await initLedger(forexContract);
         await initLedger(usdContract);
         await initLedger(inrContract);
