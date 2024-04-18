@@ -204,6 +204,7 @@ function Login() {
             >
               <MenuItem value="ADFC">ADFC Bank</MenuItem>
               <MenuItem value="IBIBI">IBIBI Bank</MenuItem>
+              <MenuItem value="YESBI">YesBI Bank</MenuItem>
             </TextField>
             <TextField
               select
@@ -214,8 +215,12 @@ function Login() {
               className="mb-4"
               required
             >
-              <MenuItem value="USD">USD</MenuItem>
-              <MenuItem value="INR">INR</MenuItem>
+              { bank == "ADFC" && (
+                <MenuItem value="USD">USD</MenuItem>
+              )}
+              { (bank == "IBIBI" || bank == "YESBI") && (
+                <MenuItem value="INR">INR</MenuItem>
+              )}
             </TextField>
             <MDBInput
               wrapperClass="mb-4"
