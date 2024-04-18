@@ -26,6 +26,7 @@ function Login() {
   const [bank, setBank] = useState("");
   const [centralBank, setCentralBank] = useState("");
   const [company, setCompany] = useState("");
+  const [tax, setTax] = useState(0);
 
   const handleJustifyClick = (value) => {
     if (value === justifyActive) {
@@ -68,7 +69,8 @@ function Login() {
         bankAccount: bankAccount,
         bank: bank,
         centralBank: centralBank,
-        company: company
+        company: company,
+        tax: tax
        })
       .then((response) => {
         console.log(response.data);
@@ -230,6 +232,16 @@ function Login() {
               placeholder="Company123"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
+              required
+            />
+            <MDBInput
+              wrapperClass="mb-4"
+              label="Tax Percentage"
+              id="tax"
+              type="text"
+              placeholder="20"
+              value={tax}
+              onChange={(e) => setTax(e.target.value)}
               required
             />
 
