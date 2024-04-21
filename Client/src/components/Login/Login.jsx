@@ -26,7 +26,7 @@ function Login() {
   const [bank, setBank] = useState("");
   const [centralBank, setCentralBank] = useState("");
   const [company, setCompany] = useState("");
-  const [tax, setTax] = useState(0);
+  const [tax, setTax] = useState("");
 
   const handleJustifyClick = (value) => {
     if (value === justifyActive) {
