@@ -62,21 +62,24 @@ export default function ContractCard({ contract }) {
                     <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
                         <em>Contractor:</em> <strong>{contract.contractor}</strong>
                     </Typography>
+                    <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
+                        <strong>{contract.natureOfWork}</strong>
+                    </Typography>
                 </Grid>
                 <Grid item md={3} lg={3} xl={3}>
                     <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
                         <strong><em>{contract.duration} days</em></strong>
                     </Typography>
                     <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
-                        From: {contract.startDate}
+                        <em>From:</em> {contract.startDate}
+                    </Typography>
+                    <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
+                        <em>Last Payment Date:</em> {contract.lastPaymentDate}
                     </Typography>
                 </Grid>
                 <Grid item md={2} lg={2} xl={2} textAlign="end">
                     <Typography variant="http://localhost:5173/contractssubtitle1" color="textPrimary" fontFamily="Arial">
                         <strong>{contract.ratePerInterval} {contract.rateCurrency} / {contract.interval} days</strong>
-                    </Typography>
-                    <Typography variant="subtitle1" color="textPrimary" fontFamily="Arial">
-                        {contract.natureOfWork}
                     </Typography>
                 </Grid>
                 <Grid item md={4} lg={4} xl={4} textAlign="end">
