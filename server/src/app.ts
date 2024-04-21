@@ -131,12 +131,12 @@ async function main(): Promise<void> {
         });
 
         app.post('/register', async (req:any, res:any) => {
-            const { username, name, password, bank, bankAccount, centralBank, company } = req.body;
+            const { username, name, password, bank, bankAccount, centralBank, company, tax } = req.body;
             try {
 
                 // Call the CreateUserAsset function on the smart contract.
                 await createUserAsset(contract, username, name, password, bank, bankAccount, centralBank, company);
-                await createBankAccountAsset(contractMap.get(bank), bankAccount, centralBank, 10000, username);
+                await createBankAccountAsset(contractMap.get(bank), bankAccount, centralBank, 10000, username, parseInt(tax));
                 res.status(200).json({ message: 'User asset created successfully' });
             } catch (error) {
                 console.error('Error creating user asset:', error);
@@ -237,10 +237,10 @@ async function main(): Promise<void> {
 
 
         app.post('/createBankAccountAsset', async (req:any, res:any) => {
-            const { accountNo, centralBank, funds, owner, bank } = req.body;
+            const { accountNo, centralBank, funds, owner, bank, tax } = req.body;
             try {
                 // Call the createBankAccountAsset function on the smart contract.
-                await createBankAccountAsset(contractMap.get(bank), accountNo, centralBank, funds, owner);
+                await createBankAccountAsset(contractMap.get(bank), accountNo, centralBank, funds, owner, parseInt(tax));
                 res.status(200).json({ message: 'Bank account asset created successfully' });
             } catch (error) {
                 console.error('Error creating bank account asset:', error);
@@ -508,9 +508,9 @@ async function acceptByManager(contract: Contract, contractId: number, manager: 
     console.log('*** Transaction committed successfully');
 }
 
-async function createBankAccountAsset(contract: Contract, accountNo: string, centralBank: string, funds: number, owner: string): Promise<void> {
+async function createBankAccountAsset(contract: Contract, accountNo: string, centralBank: string, funds: number, owner: string, tax: number): Promise<void> {
     console.log('\n--> Submit Transaction: CreateBankAccountAsset, function creates a new bank account asset on the ledger');
-    await contract.submitTransaction('CreateBankAccountAsset', accountNo, centralBank, funds.toString(), owner);
+    await contract.submitTransaction('CreateBankAccountAsset', accountNo, centralBank, funds.toString(), owner, tax.toString());
     console.log('*** Transaction committed successfully');
 }
 
