@@ -19,6 +19,7 @@ type BankAccountAsset struct {
 	CentralBank string `json:"centralBank"`
 	Funds       int    `json:"funds"`
 	Owner       string `json:"owner"`
+	Tax		 	int    `json:"tax"`
 }
 
 // InitLedger initializes the ledger with sample assets
@@ -29,7 +30,7 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 }
 
 // CreateBankAccountAsset creates a new bank account asset
-func (s *SmartContract) CreateBankAccountAsset(ctx contractapi.TransactionContextInterface, accountNo string, centralBank string, funds int, owner string) error {
+func (s *SmartContract) CreateBankAccountAsset(ctx contractapi.TransactionContextInterface, accountNo string, centralBank string, funds int, owner string, tax int) error {
 	exists, err := s.BankAccountAssetExists(ctx, accountNo)
 	if err != nil {
 		return err
@@ -43,6 +44,7 @@ func (s *SmartContract) CreateBankAccountAsset(ctx contractapi.TransactionContex
 		CentralBank: centralBank,
 		Funds:       funds,
 		Owner:       owner,
+		Tax:		 tax,
 	}
 
 	bankAccountAssetJSON, err := json.Marshal(bankAccountAsset)
@@ -104,7 +106,10 @@ func (s *SmartContract) AddFunds(ctx contractapi.TransactionContextInterface, ac
 		return err
 	}
 
-	bankAccountAsset.Funds += amount
+	taxPercent := float32(bankAccountAsset.Tax) / 100
+	percentToSend := 1 - taxPercent
+
+	bankAccountAsset.Funds += int(float32(amount) * percentToSend)
 
 	bankAccountAssetJSON, err := json.Marshal(bankAccountAsset)
 	if err != nil {
