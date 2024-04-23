@@ -14,7 +14,7 @@ import {
 } from "mdb-react-ui-kit";
 import axios from "axios";
 import bcrypt from "bcryptjs";
-import { loginUrl, registerUrl } from "../../Util/apiUrls";
+import { loginUrl, registerUrl, usersUrl } from "../../Util/apiUrls";
 
 function Login() {
   const [justifyActive, setJustifyActive] = useState("tab1");
@@ -58,6 +58,7 @@ function Login() {
   async function registerUser(event) {
     event.preventDefault();
     console.log("Register\n");
+    axios.post(usersUrl, { username: username, email: email })
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
