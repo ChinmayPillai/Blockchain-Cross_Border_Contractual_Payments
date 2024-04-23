@@ -39,12 +39,19 @@ export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.examp
 export CORE_PEER_ADDRESS=localhost:7051
 ```
 
-### Server
+### Server - Backend for Blockchain
 ```
 cd server
 npm install
 npm run build
 
 sudo bash
+npm start
+```
+
+### Server2 - Backend for SQLite3 DB
+This is used to store and retrieve non-critical user info that doesn't need to stored on the blockchain
+```
+cd server2
 npm start
 ```
