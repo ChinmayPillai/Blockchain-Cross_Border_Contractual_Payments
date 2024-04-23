@@ -351,7 +351,7 @@ async function main(): Promise<void> {
     finally {
         // gateway.close();
         // client.close();
-        console.log("Main Executed");
+        console.log(`Main Executed, Server started successfully on port ${port}`);
     }
 }
 
