@@ -29,8 +29,13 @@ export default function ContractCard({ contract }) {
             location.href = '/';
         })
         .catch(error => {
+            
             console.error('Error redeeming payment:', error);
-            alert('Error');
+            if (error.response && error.response.status === 400) {
+                alert('Payment is not due yet');
+            } else {
+                alert('Error');
+            }
         });
     }
 

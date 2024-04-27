@@ -325,6 +325,10 @@ async function main(): Promise<void> {
             try {
                 // Call the pay function on the smart contract.
                 const amount = await calculateRedemptionAmount(contract, contractId, manager, contractor, currentDate);
+                if(amount == 0){
+                    res.status(400).json({ error: 'No money left to redeem' });
+                    return;
+                }
                 await pay(contractMap.get(bankFrom), currencyFrom, currencyTo, amount, bankAccountFrom, bankTo.toLowerCase(), bankAccountTo);
                 res.status(200).json({ message: 'Payment successful' });
             } catch (error) {
