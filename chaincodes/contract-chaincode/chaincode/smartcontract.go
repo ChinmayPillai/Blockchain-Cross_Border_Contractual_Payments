@@ -577,6 +577,19 @@ func (s *SmartContract) CalculateRedemptionAmount(ctx contractapi.TransactionCon
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse current date: %v", err)
 	}
+	// Parse start date
+	startDateParsed, err := time.Parse("02-01-2006", managerContract.StartDate)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse start date: %v", err)
+	}
+
+	// Calculate end date
+	endDate := startDateParsed.AddDate(0, 0, managerContract.Duration)
+
+	// Check if current date is beyond end date
+	if currentDateParsed.After(endDate) {
+		currentDateParsed = endDate
+	}
 
 	// Parse last payment date
 	lastPaymentDateParsed, err := time.Parse("02-01-2006", managerContract.LastPaymentDate)
