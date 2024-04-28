@@ -32,7 +32,7 @@ export default function ContractCard({ contract }) {
             
             console.error('Error redeeming payment:', error);
             if (error.response && error.response.status === 400) {
-                alert('Payment is not due yet');
+                alert('Payment not due or contract ended');
             } else {
                 alert('Error');
             }
