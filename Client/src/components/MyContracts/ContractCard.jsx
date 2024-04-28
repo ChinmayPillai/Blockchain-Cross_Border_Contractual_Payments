@@ -40,7 +40,10 @@ export default function ContractCard({ contract }) {
         });
     }
 
-    function handleReject() {
+    function handleReject(e) {
+
+        e.preventDefault();
+
         console.log("Rejected");
         axios.put(revokeURL, {
             contractId: contract.contractId,
