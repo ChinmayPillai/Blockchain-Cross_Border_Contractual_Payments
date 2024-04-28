@@ -136,7 +136,7 @@ export default function ContractCard({ contract }) {
                         required
                         style={{ marginTop: '30px' }}
                     />
-                    <Button type="submit" variant="contained" color="success">
+                    <Button type="submit" variant="contained" color="error">
                         Revoke
                     </Button>
                 </form>
