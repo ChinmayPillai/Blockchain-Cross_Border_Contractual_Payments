@@ -6,6 +6,7 @@ import { payUrl, revokeURL } from "../../Util/apiUrls";
 export default function ContractCard({ contract }) {
 
     const [redeem, setRedeem] = useState(false);
+    const [revoke, setRevoke] = useState(false);
     const [currentDate, setCurrentDate] = useState('');
 
     function handleRedeem(e) {
@@ -44,7 +45,14 @@ export default function ContractCard({ contract }) {
         axios.put(revokeURL, {
             contractId: contract.contractId,
             manager: contract.manager,
-            contractor: contract.contractor
+            contractor: contract.contractor,
+            bankFrom: contract.managerBank,
+            bankTo: contract.contractorBank,
+            bankAccountFrom: contract.managerBankAccountNo,
+            bankAccountTo: contract.contractorAccount,
+            currencyFrom: contract.rateCurrency,
+            currencyTo: contract.paymentCurrency,
+            currentDate: currentDate,
         })
         .then(response => {
             console.log(response.data.message);
@@ -93,7 +101,7 @@ export default function ContractCard({ contract }) {
                             Redeem Payment
                         </Button>
                     )}
-                    <Button variant="contained" color="error" onClick={handleReject} style={{ marginLeft: '8px' }}>
+                    <Button variant="contained" color="error" onClick={() => setRevoke(true)} style={{ marginLeft: '8px' }}>
                         Revoke Contract
                     </Button>
                 </Grid>
@@ -111,6 +119,22 @@ export default function ContractCard({ contract }) {
                     />
                     <Button type="submit" variant="contained" color="success">
                         Redeem Payment
+                    </Button>
+                </form>
+            )}
+
+            {revoke && (
+                <form onSubmit={handleReject} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <TextField
+                        label="Current Date"
+                        placeholder="DD-MM-YYYY"
+                        value={currentDate}
+                        onChange={(e) => setCurrentDate(e.target.value)}
+                        required
+                        style={{ marginTop: '30px' }}
+                    />
+                    <Button type="submit" variant="contained" color="success">
+                        Revoke
                     </Button>
                 </form>
             )}

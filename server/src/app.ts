@@ -284,9 +284,13 @@ async function main(): Promise<void> {
 
 
         app.put('/revoke', async (req:any, res:any) => {
-            const { contractId, manager, contractor } = req.body;
+            const { contractId, manager, contractor, bankFrom, bankTo, bankAccountFrom, bankAccountTo, currencyFrom, currencyTo, currentDate } = req.body;
             try {
                 // Call the revoke function on the smart contract.
+                const amount = await calculateRedemptionAmount(contract, contractId, manager, contractor, currentDate);
+                if(amount != 0){
+                    await pay(contractMap.get(bankFrom), currencyFrom, currencyTo, amount, bankAccountFrom, bankTo.toLowerCase(), bankAccountTo);
+                }
                 await revoke(contract, contractId, manager, contractor);
                 res.status(200).json({ message: 'Contract revoked successfully' });
             } catch (error) {
