@@ -16,16 +16,17 @@ sudo ./install-fabric.sh
 cd fabric-samples/test-network
 
 sudo ./network.sh down
-sudo ./network.sh up createChannel
-sudo ./network.sh deployCC -ccn basic -ccp ../../chaincodes/contract-chaincode -ccl go
+sudo ./network.sh up 
+sudo ./network.sh createChannel -c contract
+sudo ./network.sh deployCC -ccn contract -ccp ../../chaincodes/contract-chaincode -c contract -ccl go
 
-sudo ./network.sh createChannel -c channel1
-sudo ./network.sh deployCC -ccn adfc -ccp ../../chaincodes/adfc-chaincode -c channel1 -ccl go
-sudo ./network.sh deployCC -ccn ibibi -ccp ../../chaincodes/ibibi-chaincode -c channel1 -ccl go
-sudo ./network.sh deployCC -ccn yesbi -ccp ../../chaincodes/yesbi-chaincode -c channel1 -ccl go
-sudo ./network.sh deployCC -ccn forex -ccp ../../chaincodes/forex-chaincode -c channel1 -ccl go
-sudo ./network.sh deployCC -ccn inr -ccp ../../chaincodes/inr-chaincode -c channel1 -ccl go
-sudo ./network.sh deployCC -ccn usd -ccp ../../chaincodes/usd-chaincode -c channel1 -ccl go
+sudo ./network.sh createChannel -c bank
+sudo ./network.sh deployCC -ccn adfc -ccp ../../chaincodes/adfc-chaincode -c bank -ccl go
+sudo ./network.sh deployCC -ccn ibibi -ccp ../../chaincodes/ibibi-chaincode -c bank -ccl go
+sudo ./network.sh deployCC -ccn yesbi -ccp ../../chaincodes/yesbi-chaincode -c bank -ccl go
+sudo ./network.sh deployCC -ccn forex -ccp ../../chaincodes/forex-chaincode -c bank -ccl go
+sudo ./network.sh deployCC -ccn inr -ccp ../../chaincodes/inr-chaincode -c bank -ccl go
+sudo ./network.sh deployCC -ccn usd -ccp ../../chaincodes/usd-chaincode -c bank -ccl go
 
 sudo bash
 

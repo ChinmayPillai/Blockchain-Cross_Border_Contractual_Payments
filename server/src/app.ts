@@ -16,9 +16,9 @@ app.use(cors());
 app.use(express.json());
 
 
-const channelName = envOrDefault('CHANNEL_NAME', 'mychannel');
-const channelName1 = envOrDefault('CHANNEL_NAME1', 'channel1');
-const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
+const contractChannel = envOrDefault('CHANNEL_NAME', 'contract');
+const bankChannel = envOrDefault('CHANNEL_NAME1', 'bank');
+const chaincodeName = envOrDefault('CHAINCODE_NAME', 'contract');
 const mspId = envOrDefault('MSP_ID', 'Org1MSP');
 
 // Path to crypto materials.
@@ -73,8 +73,8 @@ async function main(): Promise<void> {
 
     try {
         // Get a network instance representing the channel where the smart contract is deployed.
-        const network = gateway.getNetwork(channelName);
-        const bankNetwork = gateway.getNetwork(channelName1);
+        const network = gateway.getNetwork(contractChannel);
+        const bankNetwork = gateway.getNetwork(bankChannel);
 
         // Get the smart contract from the network.
         const contract = network.getContract(chaincodeName);
@@ -595,7 +595,7 @@ function envOrDefault(key: string, defaultValue: string): string {
  * displayInputParameters() will print the global scope parameters used by the main driver routine.
  */
 async function displayInputParameters(): Promise<void> {
-    console.log(`channelName:       ${channelName}`);
+    console.log(`channelName:       ${contractChannel}`);
     console.log(`chaincodeName:     ${chaincodeName}`);
     console.log(`mspId:             ${mspId}`);
     console.log(`cryptoPath:        ${cryptoPath}`);
